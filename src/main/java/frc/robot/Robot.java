@@ -3,6 +3,7 @@ package frc.robot;
 
 import frc.robot.commands.MotorOutputs;
 import frc.robot.commands.UpdatePeriodic;
+import frc.robot.commands.elevator;
 import frc.robot.constants.RobotConstants;
 
 import java.lang.reflect.GenericDeclaration;
@@ -13,6 +14,8 @@ import javax.sound.sampled.Port;
 import javax.swing.ButtonModel;
 
 import org.ejml.dense.row.linsol.InvertUsingSolve_DDRM;
+
+import com.fasterxml.jackson.annotation.ObjectIdGenerators.None;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.util.sendable.SendableRegistry;
@@ -68,7 +71,8 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
  */
 public class Robot extends TimedRobot {
 
-  // defining the motors and channels (please change the channels when electrical is finished)
+  // defining the motors and channels (please change the channels when electrical
+  // is finished)
   private final PWMSparkMax intake = new PWMSparkMax(5); // intake (obviously there will be more motors)
   private final PWMSparkMax elevator1 = new PWMSparkMax(6);
   private final PWMSparkMax elevator2 = new PWMSparkMax(2); // elevator
@@ -147,7 +151,68 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during teleoperated mode. */
   @Override
   public void teleopPeriodic() {
+    // 0.6 is the speed multiplier for normal driving
+    double drivetrain_left_speed = -RobotConstants.leftStick;
+    double drivetrain_right_speed = -RobotConstants.rightStick;
+    // double
+    // drivetrain_max_left_speed=-1.2*(RobotConstants.leftStick*RobotConstants.leftStick);
+    // double
+    // drivetrain_max_right_speed=-1.2*(RobotConstants.rightStick*RobotConstants.rightStick);
+    // y is up elevator
+    if (controller_1.getYButton()) {
+      elevator1.set(elevator_speed);
+      elevator2.set(-elevator_speed);
+    } else if (RobotConstants.aButton) {
+      // a is down elevator
+      elevator1.set(-elevator_speed);
+      elevator2.set(elevator_speed);
+    } else {
+      elevator1.set(0);
+      elevator2.set(0);
+    }
 
+    // b is intake
+    if (RobotConstants.bButton) {
+      intake.set(intake_speed);
+    } else if (RobotConstants.xButton) {
+      // x is outake
+      intake.set(-intake_speed);
+    } else {
+      intake.set(0);
+    }
+
+    // if (RobotConstants.rightTrigger>0.75) {
+    // if not rt pressed, go at normal speed
+    left1.set(-drivetrain_left_speed);
+    left2.set(drivetrain_left_speed);
+    right1.set(-drivetrain_right_speed);
+    right2.set(drivetrain_right_speed);
+    // }
+
+    /*
+     * if (RobotConstants.rightTrigger<0.75) {
+     * // when rt held, go hyperspeed
+     * if (RobotConstants.leftStick<-0.05) {
+     * left1.set(drivetrain_max_left_speed);
+     * left2.set(drivetrain_max_left_speed);
+     * } else if (RobotConstants.leftStick>0.05) {
+     * left1.set(-drivetrain_max_left_speed);
+     * left2.set(-drivetrain_max_left_speed);
+     * } else {
+     * left1.set(0);
+     * left2.set(0);
+     * }
+     * if (RobotConstants.rightStick<-0.05) {
+     * right1.set(drivetrain_max_right_speed);
+     * right2.set(drivetrain_max_right_speed);
+     * } else if (RobotConstants.rightStick>0.05) {
+     * right1.set(-drivetrain_max_right_speed);
+     * right2.set(-drivetrain_max_right_speed);
+     * } else {
+     * right1.set(0);
+     * right2.set(0);
+     * }
+     */
   }
 
   /** This function is called once each time the robot enters test mode. */
@@ -166,72 +231,8 @@ public class Robot extends TimedRobot {
     // left2.set(-0.5 * 0.95);
 
   }
-  double elevator_speed=0.5;
-  double intake_speed=0.5;
-  public void robot_controls() {
-    //  0.6 is the speed multiplier for normal driving
-    double drivetrain_left_speed=-(RobotConstants.leftStick*RobotConstants.leftStick);
-    double drivetrain_right_speed=-(RobotConstants.rightStick*RobotConstants.rightStick);
-    // double drivetrain_max_left_speed=-1.2*(RobotConstants.leftStick*RobotConstants.leftStick);
-    // double drivetrain_max_right_speed=-1.2*(RobotConstants.rightStick*RobotConstants.rightStick);
-    // y is up elevator
-    if (controller_1.getYButton()) {
-      elevator1.set(elevator_speed);
-      elevator2.set(-elevator_speed);
-    } else if (RobotConstants.aButton) {
-    // a is down elevator
-      elevator1.set(-elevator_speed);
-      elevator2.set(elevator_speed);
-    } else {
-      elevator1.set(0);
-      elevator2.set(0);
-    }
 
+  double elevator_speed = 0.5;
+  double intake_speed = 0.5;
 
-    // b is intake
-    if (RobotConstants.bButton) {
-      intake.set(intake_speed);
-    } else if (RobotConstants.xButton) {
-    //x is outake
-      intake.set(-intake_speed);
-    } else {
-      intake.set(0);
-    }
-
-
-    //if (RobotConstants.rightTrigger>0.75) {
-    //if not rt pressed, go at normal speed
-    // btw the values for leftStick and rightStick have an automatic dead zone (check RobotConstants) and drivetrain_left/right_speed automatically unfuck the left and right sticks reverse output
-    left1.set(drivetrain_left_speed);
-    left2.set(drivetrain_left_speed);
-    right1.set(drivetrain_right_speed);
-    right2.set(drivetrain_right_speed);
-    //}
-
-
-
-    /* if (RobotConstants.rightTrigger<0.75) {
-    // when rt held, go hyperspeed
-      if (RobotConstants.leftStick<-0.05) {
-        left1.set(drivetrain_max_left_speed);
-        left2.set(drivetrain_max_left_speed);
-      } else if (RobotConstants.leftStick>0.05) {
-        left1.set(-drivetrain_max_left_speed);
-        left2.set(-drivetrain_max_left_speed);
-      } else {
-        left1.set(0);
-        left2.set(0);
-      }
-      if (RobotConstants.rightStick<-0.05) {
-        right1.set(drivetrain_max_right_speed);
-        right2.set(drivetrain_max_right_speed);
-      } else if (RobotConstants.rightStick>0.05) {
-        right1.set(-drivetrain_max_right_speed);
-        right2.set(-drivetrain_max_right_speed);
-      } else {
-        right1.set(0);
-        right2.set(0);
-      }
-    */ 
-  }
 }
