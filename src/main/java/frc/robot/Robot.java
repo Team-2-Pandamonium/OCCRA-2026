@@ -13,6 +13,7 @@ import javax.swing.ButtonModel;
 
 import org.ejml.dense.row.linsol.InvertUsingSolve_DDRM;
 
+import com.ctre.phoenix6.hardware.CANrange;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators.None;
 
 import edu.wpi.first.networktables.GenericEntry;
@@ -70,26 +71,30 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
  */
 public class Robot extends TimedRobot {
 
-  // defining the motors and channels (please change the channels when electrical
-  // is finished)
-  public static final PWMSparkMax intakeShort = new PWMSparkMax(0); // intake (obviously there will be more motors)
-  public static final PWMSparkMax intakeLong = new PWMSparkMax(1); // intake (obviously there will be more motors)
+  //motors
+  public static final PWMSparkMax intakeShort = new PWMSparkMax(0);
+  public static final PWMSparkMax intakeLong = new PWMSparkMax(1); 
   public static final PWMSparkMax elevatorR = new PWMSparkMax(2);
-  public static final PWMSparkMax elevatorL = new PWMSparkMax(3); // elevator
+  public static final PWMSparkMax elevatorL = new PWMSparkMax(3);
   public static final PWMSparkMax right1 = new PWMSparkMax(4);
   public static final PWMSparkMax right2 = new PWMSparkMax(5);
   public static final PWMSparkMax left1 = new PWMSparkMax(6);
   public static final PWMSparkMax left2 = new PWMSparkMax(7);
+  //sensors
   public static final Encoder encoder = new Encoder(0, 1);
-  public static final XboxController controller_1 = new XboxController(0);
+  public static final CANrange elevatorHeight=new CANrange(0);
+  public static final DigitalInput stg2Top=new DigitalInput(0);
+  public static final DigitalInput CarrigeTop=new DigitalInput(1);
+  public static final DigitalInput CarrigeBottom=new DigitalInput(2);
+  //controllers
+  public static final XboxController DRIV_CONTROLLER = new XboxController(0);
+  public static final XboxController OPPERA_CONTROLLER=new XboxController(1);
 
   private Timer autonTimer = new Timer();
   // private Timer intakeTimer = new Timer();
   // private Timer robotStartTimer = new Timer();
 
   public ShuffleboardTab newTabKevin = Shuffleboard.getTab("KevinTabV2");
-  private GenericEntry robotAcceleration = newTabKevin.add("Robot Acceleration", .1).getEntry();
-  private GenericEntry activeCruiseMode = newTabKevin.add("Cruise Mode", -111).getEntry();
   private GenericEntry cameraRequirement = newTabKevin.add("Camera Requirements", 0).getEntry();
   // private GenericEntry sensorState = newTabKevin.add("Beam break sensor",
   // false).getEntry();
@@ -146,7 +151,7 @@ public class Robot extends TimedRobot {
     // double
     // drivetrain_max_right_speed=-1.2*(RobotConstants.rightStick*RobotConstants.rightStick);
     // y is up elevator
-    if (controller_1.getYButton()) {
+    if (DRIV_CONTROLLER.getYButton()) {
       elevatorR.set(RobotConstants.elevator_speed);
       elevatorL.set(-RobotConstants.elevator_speed);
     } else if (RobotConstants.aButton) {

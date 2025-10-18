@@ -15,36 +15,36 @@ public class UpdatePeriodic {
     public static void updateControllerInputs() {
         // if any of these are below the deadzone, it equals zero. abs so the controller
         // can go negative
-        if (Math.abs(frc.robot.Robot.controller_1.getLeftY()) >= RobotConstants.deadzone) {
-            RobotConstants.leftStick = frc.robot.Robot.controller_1.getLeftY();
+        if (Math.abs(frc.robot.Robot.DRIV_CONTROLLER.getLeftY()) >= RobotConstants.deadzone) {
+            RobotConstants.leftStick = frc.robot.Robot.DRIV_CONTROLLER.getLeftY();
         } else {
             RobotConstants.leftStick = 0;
         }
 
-        if (Math.abs(frc.robot.Robot.controller_1.getRightY()) >= RobotConstants.deadzone) {
-            RobotConstants.rightStick = frc.robot.Robot.controller_1.getRightY();
+        if (Math.abs(frc.robot.Robot.DRIV_CONTROLLER.getRightY()) >= RobotConstants.deadzone) {
+            RobotConstants.rightStick = frc.robot.Robot.DRIV_CONTROLLER.getRightY();
         } else {
             RobotConstants.rightStick = 0;
         }
 
-        if (frc.robot.Robot.controller_1.getLeftTriggerAxis() >= RobotConstants.deadzone) {
-            RobotConstants.leftTrigger = frc.robot.Robot.controller_1.getLeftTriggerAxis();
+        if (frc.robot.Robot.DRIV_CONTROLLER.getLeftTriggerAxis() >= RobotConstants.deadzone) {
+            RobotConstants.leftTrigger = frc.robot.Robot.DRIV_CONTROLLER.getLeftTriggerAxis();
         } else {
             RobotConstants.leftTrigger = 0;
         }
 
-        if (frc.robot.Robot.controller_1.getRightTriggerAxis() >= RobotConstants.deadzone) {
-            RobotConstants.rightTrigger = frc.robot.Robot.controller_1.getRightTriggerAxis();
+        if (frc.robot.Robot.DRIV_CONTROLLER.getRightTriggerAxis() >= RobotConstants.deadzone) {
+            RobotConstants.rightTrigger = frc.robot.Robot.DRIV_CONTROLLER.getRightTriggerAxis();
         } else {
             RobotConstants.rightTrigger = 0;
         }
 
         // booleans, so no deadzone needed
-        RobotConstants.leftBumper = frc.robot.Robot.controller_1.getLeftBumper();
-        RobotConstants.rightBumper = frc.robot.Robot.controller_1.getRightBumper();
-        RobotConstants.bButton = frc.robot.Robot.controller_1.getBButton();
-        RobotConstants.xButton = frc.robot.Robot.controller_1.getXButton();
-        RobotConstants.aButton = frc.robot.Robot.controller_1.getAButton();
+        RobotConstants.leftBumper = frc.robot.Robot.DRIV_CONTROLLER.getLeftBumper();
+        RobotConstants.rightBumper = frc.robot.Robot.DRIV_CONTROLLER.getRightBumper();
+        RobotConstants.bButton = frc.robot.Robot.DRIV_CONTROLLER.getBButton();
+        RobotConstants.xButton = frc.robot.Robot.DRIV_CONTROLLER.getXButton();
+        RobotConstants.aButton = frc.robot.Robot.DRIV_CONTROLLER.getAButton();
 
     }
 
