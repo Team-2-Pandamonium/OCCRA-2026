@@ -82,7 +82,13 @@ public class Robot extends TimedRobot {
   public static final PWMSparkMax left1 = new PWMSparkMax(6);
   public static final PWMSparkMax left2 = new PWMSparkMax(7);
   public static final Encoder encoder = new Encoder(0, 1);
-  public static final XboxController controller_1 = new XboxController(0);
+  public static final CANrange elevatorHeight = new CANrange(0);
+  public static final DigitalInput stg2Top = new DigitalInput(0);
+  public static final DigitalInput CarrigeTop = new DigitalInput(1);
+  public static final DigitalInput CarrigeBottom = new DigitalInput(2);
+  // controllers
+  public static final XboxController DRIV_CONTROLLER = new XboxController(0);
+  public static final XboxController OPPERA_CONTROLLER = new XboxController(1);
 
   private Timer autonTimer = new Timer();
   // private Timer intakeTimer = new Timer();
