@@ -73,8 +73,8 @@ public class Robot extends TimedRobot {
 
   // defining the motors and channels (please change the channels when electrical
   // is finished)
-  public static final PWMSparkMax intakeShort = new PWMSparkMax(0); // intake (obviously there will be more motors)
-  public static final PWMSparkMax intakeLong = new PWMSparkMax(1); // intake (obviously there will be more motors)
+  public static final PWMSparkMax intakeShort = new PWMSparkMax(0);
+  public static final PWMSparkMax intakeLong = new PWMSparkMax(1);
   public static final PWMSparkMax elevatorR = new PWMSparkMax(2);
   public static final PWMSparkMax elevatorL = new PWMSparkMax(3);
   public static final PWMSparkMax right1 = new PWMSparkMax(4);
@@ -177,11 +177,14 @@ public class Robot extends TimedRobot {
     }
 
     // if (RobotConstants.rightTrigger>0.75) {
-    // if not rt pressed, go at normal speed
+    // one motor goes one way, the other goes opposite
+    // this is basic drivetrain motor managment
+    // please don't change this unless controls are f*cked up
+    // also there is an automatic deadzone, that's why there's no if statements
     left1.set(-RobotConstants.leftStick);
-    left2.set(-RobotConstants.leftStick);
+    left2.set(RobotConstants.leftStick);
     right1.set(-RobotConstants.rightStick);
-    right2.set(-RobotConstants.rightStick);
+    right2.set(RobotConstants.rightStick);
     // }
 
     /*
