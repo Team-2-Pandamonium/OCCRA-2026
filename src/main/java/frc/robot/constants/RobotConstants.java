@@ -10,17 +10,10 @@ public class RobotConstants {
     // both if drivebase if fine.
     // public static final double rightDrift = 1;
     public static final double autonSpeed = .5;
-    public static final double deadzone = .05;
+    public static final double deadzone = .01;
 
     // driving
-    public static final double robotSpeedSave = 1;
-    public static final double accelerationRate = .2;
-    public static double leftOutput = 0;
-    public static double rightOutput = 0;
-    public static double leftTarget = 0;
-    public static double rightTarget = 0;
-    public static double robotSpeed = 0.5;
-    public static boolean cruiseControl = false; // fasle=off true=on
+    public static final double robotMaxSpeed = 1;
 
     // elevator (all values in inches)
     public static final double elevator_speed = 0.5;
@@ -34,15 +27,27 @@ public class RobotConstants {
     public static double encoderRat;
     // manipulaor
 
-    // inputs
-    public static double rightTrigger;
-    public static double leftStick;
-    public static double rightStick;
-    public static Boolean leftBumper;
-    public static Boolean rightBumper;
-    public static double leftTrigger;
-    public static boolean bButton;
-    public static boolean xButton;
-    public static boolean aButton;
+    // inputs, driver
+    public static double DrivrightTrigger;
+    public static double DrivleftStick;
+    public static double DrivrightStick;
+    public static Boolean DrivleftBumper;
+    public static Boolean DrivrightBumper;
+    public static double DrivleftTrigger;
+    public static boolean DrivbButton;
+    public static boolean DrivxButton;
+    public static boolean DrivaButton;
+    public static boolean DrivyButton;
+    // operator
+    public static double OpperarightTrigger;
+    public static double OpperaleftStick;
+    public static double OpperarightStick;
+    public static Boolean OpperaleftBumper;
+    public static Boolean OpperarightBumper;
+    public static double OpperaleftTrigger;
+    public static boolean OpperabButton;
+    public static boolean OpperaxButton;
+    public static boolean OpperaaButton;
+    public static boolean OpperayButton;
 
 }

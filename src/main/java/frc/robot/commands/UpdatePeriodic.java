@@ -15,37 +15,70 @@ public class UpdatePeriodic {
     public static void updateControllerInputs() {
         // if any of these are below the deadzone, it equals zero. abs so the controller
         // can go negative
+        //Driver
         if (Math.abs(frc.robot.Robot.DRIV_CONTROLLER.getLeftY()) >= RobotConstants.deadzone) {
-            RobotConstants.leftStick = frc.robot.Robot.DRIV_CONTROLLER.getLeftY();
+            RobotConstants.DrivleftStick = frc.robot.Robot.DRIV_CONTROLLER.getLeftY();
         } else {
-            RobotConstants.leftStick = 0;
+            RobotConstants.DrivleftStick = 0;
         }
 
         if (Math.abs(frc.robot.Robot.DRIV_CONTROLLER.getRightY()) >= RobotConstants.deadzone) {
-            RobotConstants.rightStick = frc.robot.Robot.DRIV_CONTROLLER.getRightY();
+            RobotConstants.DrivrightStick = frc.robot.Robot.DRIV_CONTROLLER.getRightY();
         } else {
-            RobotConstants.rightStick = 0;
+            RobotConstants.DrivrightStick = 0;
         }
 
         if (frc.robot.Robot.DRIV_CONTROLLER.getLeftTriggerAxis() >= RobotConstants.deadzone) {
-            RobotConstants.leftTrigger = frc.robot.Robot.DRIV_CONTROLLER.getLeftTriggerAxis();
+            RobotConstants.DrivleftTrigger = frc.robot.Robot.DRIV_CONTROLLER.getLeftTriggerAxis();
         } else {
-            RobotConstants.leftTrigger = 0;
+            RobotConstants.DrivleftTrigger = 0;
         }
 
         if (frc.robot.Robot.DRIV_CONTROLLER.getRightTriggerAxis() >= RobotConstants.deadzone) {
-            RobotConstants.rightTrigger = frc.robot.Robot.DRIV_CONTROLLER.getRightTriggerAxis();
+            RobotConstants.DrivrightTrigger = frc.robot.Robot.DRIV_CONTROLLER.getRightTriggerAxis();
         } else {
-            RobotConstants.rightTrigger = 0;
+            RobotConstants.DrivrightTrigger = 0;
         }
 
-        // booleans, so no deadzone needed
-        RobotConstants.leftBumper = frc.robot.Robot.DRIV_CONTROLLER.getLeftBumper();
-        RobotConstants.rightBumper = frc.robot.Robot.DRIV_CONTROLLER.getRightBumper();
-        RobotConstants.bButton = frc.robot.Robot.DRIV_CONTROLLER.getBButton();
-        RobotConstants.xButton = frc.robot.Robot.DRIV_CONTROLLER.getXButton();
-        RobotConstants.aButton = frc.robot.Robot.DRIV_CONTROLLER.getAButton();
+        // booleans, so no deadzone needed, driver
+        RobotConstants.DrivleftBumper = frc.robot.Robot.DRIV_CONTROLLER.getLeftBumper();
+        RobotConstants.DrivrightBumper = frc.robot.Robot.DRIV_CONTROLLER.getRightBumper();
+        RobotConstants.DrivbButton = frc.robot.Robot.DRIV_CONTROLLER.getBButton();
+        RobotConstants.DrivxButton = frc.robot.Robot.DRIV_CONTROLLER.getXButton();
+        RobotConstants.DrivaButton = frc.robot.Robot.DRIV_CONTROLLER.getAButton();
+        RobotConstants.DrivyButton = frc.robot.Robot.DRIV_CONTROLLER.getYButton();
+        // Opperator
+        if (Math.abs(frc.robot.Robot.OPPERA_CONTROLLER.getLeftY()) >= RobotConstants.deadzone) {
+            RobotConstants.OpperaleftStick = frc.robot.Robot.OPPERA_CONTROLLER.getLeftY();
+        } else {
+            
+            RobotConstants.OpperaleftStick = 0;
+        }
 
+        if (Math.abs(frc.robot.Robot.OPPERA_CONTROLLER.getRightY()) >= RobotConstants.deadzone) {
+            RobotConstants.OpperarightStick = frc.robot.Robot.OPPERA_CONTROLLER.getRightY();
+        } else {
+            RobotConstants.OpperarightStick = 0;
+        }
+
+        if (frc.robot.Robot.OPPERA_CONTROLLER.getLeftTriggerAxis() >= RobotConstants.deadzone) {
+            RobotConstants.OpperaleftTrigger = frc.robot.Robot.OPPERA_CONTROLLER.getLeftTriggerAxis();
+        } else {
+            RobotConstants.OpperaleftTrigger = 0;
+        }
+
+        if (frc.robot.Robot.OPPERA_CONTROLLER.getRightTriggerAxis() >= RobotConstants.deadzone) {
+            RobotConstants.OpperarightTrigger = frc.robot.Robot.OPPERA_CONTROLLER.getRightTriggerAxis();
+        } else {
+            RobotConstants.OpperarightTrigger = 0;
+        }
+        
+        RobotConstants.OpperaleftBumper = frc.robot.Robot.OPPERA_CONTROLLER.getLeftBumper();
+        RobotConstants.OpperarightBumper = frc.robot.Robot.OPPERA_CONTROLLER.getRightBumper();
+        RobotConstants.OpperabButton = frc.robot.Robot.OPPERA_CONTROLLER.getBButton();
+        RobotConstants.OpperaxButton = frc.robot.Robot.OPPERA_CONTROLLER.getXButton();
+        RobotConstants.OpperaaButton = frc.robot.Robot.OPPERA_CONTROLLER.getAButton();
+        RobotConstants.OpperayButton = frc.robot.Robot.OPPERA_CONTROLLER.getYButton();
     }
 
     public static void updateSensorValues() {

@@ -1,20 +1,14 @@
 package frc.robot.commands;
 
+import frc.robot.Robot;
 import frc.robot.constants.RobotConstants;
 
 /*
  * TODO:
- * sensors we will have
- * - encoder on belts
- * - 3-4 magnetic limit switches on elevator
- * - CANrange dist sensor
- * - maybe see abut checking for voltage spike on neo vortexes for bottom 0/top 0
- * other
  * - pid loop for elevator bc we actaully have ecoders :)
- * - make buttons have mapping so they can go to specific levels and stuff
  */
 public class Elevator {
-
+  
   /**
    * This calculates how much the elevator has to move to get to the desired level
    * 
@@ -28,7 +22,7 @@ public class Elevator {
    * @param level
    * @return <b>movDist<b>
    */
-  public static double calcDist(int level) {
+  public static double calcDist(int level,double currHeight) {
     double desLevel = 0;
     switch (level) {
       case 1: // 1st shelf
@@ -55,11 +49,11 @@ public class Elevator {
       default: // else: return 0
         break;
     }
-    double movDist = desLevel - RobotConstants.elevatorHeight;
+    double movDist = desLevel - currHeight;
     return movDist;
   }
 
-  public static double inchesToRotations(int inches) {
+  public static double inchesToRotations(double inches) {
     double rotations;
     rotations = (inches * 25.4) / 20;
     return rotations;
@@ -68,5 +62,40 @@ public class Elevator {
     // btw 1 rotation is 20 mm but maybe innacurate due to vectors with belts (jst
     // multiplied the number of teeth by the dist between them) ;-;
   }
+  public static double RottoIn(double rot) {
+    double in;
+    in=(rot*20)/25.4;
+    return in;
+    // need rps (rotation per second) at max cause number of rotations needed
+    // converted to seconds needed, then jst a wait statement
+    // btw 1 rotation is 20 mm but maybe innacurate due to vectors with belts (jst
+    // multiplied the number of teeth by the dist between them) ;-;
+  }
 
+  /**
+   * Acts like the P part of PID control loop
+   * @param desLevel
+   * @param currHeight
+   * @return <b>MotorSpeed<b>
+   */
+  public static double dumbCalcMotSpd(int desLevel,double currHeight){
+    double deltaHeight=calcDist(desLevel, currHeight);
+    double rot=inchesToRotations(deltaHeight);
+    return rot/76.2;
+  }
+
+  public static void reset0(){
+    //go down until we see the voltage of motors spike and then we know its at the bottom
+    double volt=0;
+    double prevVolt=0;
+    final double voltThreshold=3;
+    while (!(Math.abs(volt-prevVolt)>voltThreshold)) {
+      Robot.elevatorL.set(-0.75);
+      Robot.elevatorR.set(-0.75);
+    }
+    Robot.elevatorL.set(0);
+    Robot.elevatorR.set(0);
+    Robot.encoder.reset();
+    
+  }
 }

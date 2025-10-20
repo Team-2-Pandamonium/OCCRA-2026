@@ -13,8 +13,16 @@ import javax.swing.ButtonModel;
 
 import org.ejml.dense.row.linsol.InvertUsingSolve_DDRM;
 
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators.None;
+import com.revrobotics.spark.SparkAbsoluteEncoder;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.SparkBase;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.util.sendable.SendableRegistry;
@@ -55,7 +63,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
-
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 /*
  * CONTROL SCHEME
  *  Driving -
@@ -72,17 +80,17 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 public class Robot extends TimedRobot {
 
   //motors
-  public static final PWMSparkMax intakeShort = new PWMSparkMax(0);
-  public static final PWMSparkMax intakeLong = new PWMSparkMax(1); 
-  public static final PWMSparkMax elevatorR = new PWMSparkMax(2);
-  public static final PWMSparkMax elevatorL = new PWMSparkMax(3);
-  public static final PWMSparkMax right1 = new PWMSparkMax(4);
-  public static final PWMSparkMax right2 = new PWMSparkMax(5);
-  public static final PWMSparkMax left1 = new PWMSparkMax(6);
-  public static final PWMSparkMax left2 = new PWMSparkMax(7);
+  public static final SparkMax manShort = new SparkMax(0, MotorType.kBrushless);
+  public static final SparkMax manLong = new SparkMax(1, MotorType.kBrushless);
+  public static final SparkMax elevatorR = new SparkMax(2, MotorType.kBrushless);
+  public static final SparkMax elevatorL = new SparkMax(3, MotorType.kBrushless);
+  public static final SparkMax right1 = new SparkMax(4, MotorType.kBrushless);
+  public static final SparkMax right2 = new SparkMax(5, MotorType.kBrushless);
+  public static final SparkMax left1 = new SparkMax(6, MotorType.kBrushless);
+  public static final SparkMax left2 = new SparkMax(7, MotorType.kBrushless);
   //sensors
-  public static final Encoder encoder = new Encoder(0, 1);
-  public static final CANrange elevatorHeight = new CANrange(0);
+  public static final Encoder encoder = new Encoder(4, 5);
+  public static final CANrange elevatorHeight = new CANrange(3);
   public static final DigitalInput stg2Top = new DigitalInput(0);
   public static final DigitalInput CarrigeTop = new DigitalInput(1);
   public static final DigitalInput CarrigeBottom = new DigitalInput(2);
@@ -95,11 +103,7 @@ public class Robot extends TimedRobot {
   // private Timer robotStartTimer = new Timer();
 
   public ShuffleboardTab newTabKevin = Shuffleboard.getTab("KevinTabV2");
-  private GenericEntry cameraRequirement = newTabKevin.add("Camera Requirements", 0).getEntry();
-  // private GenericEntry sensorState = newTabKevin.add("Beam break sensor",
-  // false).getEntry();
-  // private GenericEntry cruiseOnOff = newTabKevin.add("cruise enable",
-  // RobotConstants.cruiseControl).withWidget(BuiltInWidgets.kToggleButton).getEntry();
+  public GenericEntry cameraRequirement = newTabKevin.add("Camera Requirements", 0).getEntry();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -108,12 +112,29 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    // timer to make the loader not move on startup
-    // this.robotStartTimer.start();
-    // inverting one motor per gearbox to keep directionality
-    right1.setInverted(true);
-    right2.setInverted(true);
-    elevatorR.setInverted(true);
+
+    SparkMaxConfig config = new SparkMaxConfig();
+    config.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(false);
+    SparkMaxConfig followerConfig = new SparkMaxConfig();
+    followerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(false);
+
+    right1.configure(config, null, null);
+    followerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(false).follow(right1);
+    right2.configure(followerConfig, null, null);
+
+    config.inverted(true);
+    left1.configure(config, null, null);
+    followerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(true).follow(left1);
+    left2.configure(followerConfig, null, null);
+
+    config.inverted(false);
+    elevatorR.configure(config, null, null);
+    followerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(false).follow(elevatorR, true);
+    elevatorL.configure(followerConfig, null, null);
+
+    manLong.configure(config, null, null);
+    manShort.configure(config, null, null);
+
   }
 
   /** This function is run once each time the robot enters autonomous mode. */
@@ -151,12 +172,12 @@ public class Robot extends TimedRobot {
     // double
     // drivetrain_max_right_speed=-1.2*(RobotConstants.rightStick*RobotConstants.rightStick);
     // y is up elevator
-    if (DRIV_CONTROLLER.getYButton()) {
+    if (RobotConstants.DrivyButton) {
       elevatorR.set(RobotConstants.elevator_speed);
-      elevatorL.set(-RobotConstants.elevator_speed);
-    } else if (RobotConstants.aButton) {
+      elevatorL.set(RobotConstants.elevator_speed);
+    } else if (RobotConstants.DrivaButton) {
       // a is down elevator
-      elevatorR.set(-RobotConstants.elevator_speed);
+      elevatorR.set(RobotConstants.elevator_speed);
       elevatorL.set(RobotConstants.elevator_speed);
     } else {
       elevatorR.set(0);
@@ -164,50 +185,39 @@ public class Robot extends TimedRobot {
     }
 
     // b is intake
-    if (RobotConstants.bButton) {
-      intakeShort.set(RobotConstants.intake_speed);
-      intakeLong.set(-RobotConstants.intake_speed);
-    } else if (RobotConstants.xButton) {
+    if (RobotConstants.DrivbButton) {
+      manShort.set(RobotConstants.intake_speed);
+      manLong.set(-RobotConstants.intake_speed);
+    } else if (RobotConstants.DrivxButton) {
       // x is outake
-      intakeShort.set(-RobotConstants.intake_speed);
-      intakeLong.set(RobotConstants.intake_speed);
+      manShort.set(-RobotConstants.intake_speed);
+      manLong.set(RobotConstants.intake_speed);
     } else {
-      intakeShort.set(0);
-      intakeLong.set(0);
+      manShort.set(0);
+      manLong.set(0);
+    }
+    // sets the speed of the elevator motors based on what the operator inputs
+    if (RobotConstants.OpperaaButton && (RobotConstants.OpperarightTrigger > 0 || RobotConstants.OpperarightBumper)) { // lvl1r
+      elevatorR.set(Elevator.dumbCalcMotSpd(4, RobotConstants.elevatorHeight));
+    } else if (RobotConstants.OpperabButton
+        && (RobotConstants.OpperarightTrigger > 0 || RobotConstants.OpperarightBumper)) { // lvl2 r
+      elevatorR.set(Elevator.dumbCalcMotSpd(5, RobotConstants.elevatorHeight));
+    } else if (RobotConstants.OpperaxButton
+        && (RobotConstants.OpperarightTrigger > 0 || RobotConstants.OpperarightBumper)) { // lvl3 r
+      elevatorR.set(Elevator.dumbCalcMotSpd(6, RobotConstants.elevatorHeight));
+    } else if (RobotConstants.OpperaaButton) { // lvl1
+      elevatorR.set(Elevator.dumbCalcMotSpd(1, RobotConstants.elevatorHeight));
+    } else if (RobotConstants.OpperabButton) { // lvl2
+      elevatorR.set(Elevator.dumbCalcMotSpd(2, RobotConstants.elevatorHeight));
+    } else if (RobotConstants.OpperaxButton) { // lvl3
+      elevatorR.set(Elevator.dumbCalcMotSpd(3, RobotConstants.elevatorHeight));
+    } else if (RobotConstants.OpperayButton) { // hp
+      elevatorR.set(Elevator.dumbCalcMotSpd(7, RobotConstants.elevatorHeight));
     }
 
-    // if (RobotConstants.rightTrigger>0.75) {
-    // if not rt pressed, go at normal speed
-    left1.set(-RobotConstants.leftStick);
-    left2.set(-RobotConstants.leftStick);
-    right1.set(-RobotConstants.rightStick);
-    right2.set(-RobotConstants.rightStick);
-    // }
+    left1.set(RobotConstants.DrivleftStick * RobotConstants.robotMaxSpeed);
+    right1.set(RobotConstants.DrivrightStick * RobotConstants.robotMaxSpeed);
 
-    /*
-     * if (RobotConstants.rightTrigger<0.75) {
-     * // when rt held, go hyperspeed
-     * if (RobotConstants.leftStick<-0.05) {
-     * left1.set(drivetrain_max_left_speed);
-     * left2.set(drivetrain_max_left_speed);
-     * } else if (RobotConstants.leftStick>0.05) {
-     * left1.set(-drivetrain_max_left_speed);
-     * left2.set(-drivetrain_max_left_speed);
-     * } else {
-     * left1.set(0);
-     * left2.set(0);
-     * }
-     * if (RobotConstants.rightStick<-0.05) {
-     * right1.set(drivetrain_max_right_speed);
-     * right2.set(drivetrain_max_right_speed);
-     * } else if (RobotConstants.rightStick>0.05) {
-     * right1.set(-drivetrain_max_right_speed);
-     * right2.set(-drivetrain_max_right_speed);
-     * } else {
-     * right1.set(0);
-     * right2.set(0);
-     * }
-     */
   }
 
   /** This function is called once each time the robot enters test mode. */
@@ -219,11 +229,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-    // loader.set(RobotConstants.loaderPower);
-    // right1.set(-0.5);
-    // right2.set(-0.5);
-    // left1.set(-0.5 * 0.95);
-    // left2.set(-0.5 * 0.95);
+
 
   }
 
