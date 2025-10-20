@@ -1,3 +1,5 @@
 PID loop for elevator (instead of current control system)
 Any type of organization or simplification of code (maybe comment to clarify)
 The entirety of autonomous
+encoder output to inches
+shuffleboard documaentation 
