@@ -25,6 +25,9 @@ public class RobotConstants {
     public static final double humanPlayer = 35;
     public static double encoderPos;
     public static double encoderRat;
+    public static boolean carrigeTop;
+    public static boolean stg2Top;
+    public static boolean carrigeBot;
     // manipulaor
 
     // inputs, driver

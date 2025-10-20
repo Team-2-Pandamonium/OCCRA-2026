@@ -94,7 +94,16 @@ public class Robot extends TimedRobot {
   public static final DigitalInput stg2Top = new DigitalInput(0);
   public static final DigitalInput CarrigeTop = new DigitalInput(1);
   public static final DigitalInput CarrigeBottom = new DigitalInput(2);
-  //controllers
+  // elevator mappings (im assuming digital inputs come from operator computer)
+  public static final DigitalInput elevator_lvl1 = new DigitalInput(3);
+  public static final DigitalInput elevator_lvl2 = new DigitalInput(4);
+  public static final DigitalInput elevator_lvl3 = new DigitalInput(5);
+  public static final DigitalInput elevator_lvl1r = new DigitalInput(6);
+  public static final DigitalInput elevator_lvl2r = new DigitalInput(7);
+  public static final DigitalInput elevator_lvl3r = new DigitalInput(8);
+  public static final DigitalInput elevator_hp = new DigitalInput(9);
+
+  // controllers
   public static final XboxController DRIV_CONTROLLER = new XboxController(0);
   public static final XboxController OPPERA_CONTROLLER = new XboxController(1);
 
