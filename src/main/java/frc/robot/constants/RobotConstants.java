@@ -56,5 +56,12 @@ public class RobotConstants {
     public static boolean OpperaxButton;
     public static boolean OpperaaButton;
     public static boolean OpperayButton;
-
+    public static boolean OpperaDPadUp;
+    public static boolean OpperaDPadUpRight;
+    public static boolean OpperaDPadRight;
+    public static boolean OpperaDPadDownRight;
+    public static boolean OpperaDPadDown;
+    public static boolean OpperaDPadDownLeft;
+    public static boolean OpperaDPadLeft;
+    public static boolean OpperaDPadUpLeft;
 }

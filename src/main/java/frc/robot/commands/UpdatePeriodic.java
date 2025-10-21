@@ -2,9 +2,11 @@ package frc.robot.commands;
 
 import frc.robot.Robot;
 import frc.robot.constants.RobotConstants;
+import frc.robot.constants.PIDVar;
 
 import java.lang.reflect.Type;
 
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -84,6 +86,56 @@ public class UpdatePeriodic {
         RobotConstants.OpperaxButton = frc.robot.Robot.OPPERA_CONTROLLER.getXButton();
         RobotConstants.OpperaaButton = frc.robot.Robot.OPPERA_CONTROLLER.getAButton();
         RobotConstants.OpperayButton = frc.robot.Robot.OPPERA_CONTROLLER.getYButton();
+
+        RobotConstants.OpperaDPadUp = false;
+        RobotConstants.OpperaDPadUpRight = false;
+        RobotConstants.OpperaDPadRight = false;
+        RobotConstants.OpperaDPadDownRight = false;
+        RobotConstants.OpperaDPadDown = false;
+        RobotConstants.OpperaDPadDownLeft = false;
+        RobotConstants.OpperaDPadLeft = false;
+        RobotConstants.OpperaDPadUpLeft = false;
+
+        int OpperaPOV = Robot.OPPERA_CONTROLLER.getPOV();
+        switch (OpperaPOV) {
+            case 0: // up
+                RobotConstants.OpperaDPadUp = true;
+                break;
+            case 45: // up-right
+                RobotConstants.OpperaDPadUpRight = true;
+
+                break;
+            case 90: // right
+                RobotConstants.OpperaDPadRight = true;
+
+                break;
+            case 135: // down-right
+                RobotConstants.OpperaDPadDownRight = true;
+
+                break;
+            case 180: // down
+                RobotConstants.OpperaDPadDown = true;
+
+                break;
+            case 225: // down-left
+                RobotConstants.OpperaDPadDownLeft = true;
+
+                break;
+            case 270: // left
+                RobotConstants.OpperaDPadLeft = true;
+
+                break;
+            case 315: // up-left
+                RobotConstants.OpperaDPadUpLeft = true;
+                break;
+
+            case -1: // Nothing pressed
+
+                break;
+            default:
+                System.err.println("Error somehow you pressed a button on the DPad that doesnt exist");
+                break;
+        }
     }
 
     public static void updateSensorValues() {
@@ -92,5 +144,16 @@ public class UpdatePeriodic {
         RobotConstants.carrigeBot=frc.robot.Robot.CarrigeBottom.get();
         RobotConstants.carrigeTop=frc.robot.Robot.CarrigeTop.get();
         RobotConstants.stg2Top=frc.robot.Robot.stg2Top.get();
+    }
+
+    public static void updatePIDSensors() {
+        PIDVar.manShortEncVal = Robot.manShortEnc.getPosition();
+        PIDVar.manLongEncVal = Robot.manLongEnc.getPosition();
+        PIDVar.elevatorREncVal = Robot.elevatorREnc.getPosition();
+        PIDVar.elevatorLEncVal = Robot.elevatorLEnc.getPosition();
+        PIDVar.right1EncVal = Robot.right1Enc.getPosition();
+        PIDVar.right2EncVal = Robot.right2Enc.getPosition();
+        PIDVar.left1EncVal = Robot.left1Enc.getPosition();
+        PIDVar.left2EncVal = Robot.left2Enc.getPosition();
     }
 }

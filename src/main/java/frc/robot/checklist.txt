@@ -3,3 +3,7 @@ Any type of organization or simplification of code (maybe comment to clarify)
 The entirety of autonomous
 encoder output to inches
 shuffleboard documaentation 
+
+change elevator to output rot to motor controller to use its pid loop coded elseware to actaully find the motor speed
+make d-pad override elevator and give direct control to opperator
+make left bumper set it to go to bottom

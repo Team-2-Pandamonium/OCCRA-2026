@@ -18,19 +18,23 @@ public class Elevator {
   /**
    * This calculates how much the elevator has to move to get to the desired level
    * 
-   * @apiNote 1=1st shelf
-   * @apiNote 2=2nd shelf
-   * @apiNote 3=3rd shelf
-   * @apiNote 4=1st shelf indexing
-   * @apiNote 5=2nd shelf indexing
-   * @apiNote 6=3rd shelf indexing
-   * @apiNote 7=HP station
+   * @apiNote 0 = ground
+   * @apiNote 1 = 1st shelf
+   * @apiNote 2 = 2nd shelf
+   * @apiNote 3 = 3rd shelf
+   * @apiNote 4 = 1st shelf indexing
+   * @apiNote 5 = 2nd shelf indexing
+   * @apiNote 6 = 3rd shelf indexing
+   * @apiNote 7 = HP station
    * @param level
    * @return <b>movDist<b>
    */
   public static double calcDist(int level,double currHeight) {
     double desLevel = 0;
     switch (level) {
+      case 0:
+        desLevel = 0;
+        break;
       case 1: // 1st shelf
         desLevel = RobotConstants.Level1;
         break;
@@ -81,18 +85,20 @@ public class Elevator {
 
   /**
    * Acts like the P part of PID control loop
+   * 
    * @param desLevel
    * @param currHeight
    * @return <b>MotorSpeed<b>
+   * @deprecated <b>Will replace With PID loops on motor controllers<b>
    */
   public static double dumbCalcMotSpd(int desLevel,double currHeight){
     double deltaHeight=calcDist(desLevel, currHeight);
     double rot=inchesToRotations(deltaHeight);
-    return rot / 59.625; // 59.625 bc thats how high the elevator can extend
+    return rot / RottoIn(59.625); // 59.625 bc thats how high the elevator can extend
   }
 
 
-  public static void reset0(){
+  public static void reset0() { // DO NOT USE RN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //go down until we see the voltage of motors spike and then we know its at the bottom
     double CurrentL = Robot.elevatorL.getOutputCurrent();
     double prevCurrentL = Robot.elevatorL.getOutputCurrent();
