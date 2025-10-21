@@ -87,7 +87,7 @@ public class Elevator {
   public static double dumbCalcMotSpd(int desLevel,double currHeight){
     double deltaHeight=calcDist(desLevel, currHeight);
     double rot=inchesToRotations(deltaHeight);
-    return rot/76.2;
+    return rot/59.625;
   }
 
   public static void reset0(){
