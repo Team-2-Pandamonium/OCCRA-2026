@@ -103,7 +103,7 @@ public class Elevator {
         || (!(Math.abs(CurrentL - prevCurrentL) > currentThreshold))) ||
         Robot.DRIV_CONTROLLER.getLeftStickButton(/* emergancy stop */)) {
 
-      Robot.elevatorR.set(-1);
+      Robot.elevatorR.set(1);
       prevCurrentL = CurrentL;
       prevCurrentR = CurrentR;
       CurrentL = Robot.elevatorL.getOutputCurrent();

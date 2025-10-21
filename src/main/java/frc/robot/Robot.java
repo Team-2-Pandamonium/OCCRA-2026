@@ -94,9 +94,9 @@ public class Robot extends TimedRobot {
   public static final Encoder elevatorEncR = new Encoder(0, 1);
   public static final Encoder elevatorEncL = new Encoder(2, 3);
   // public static final CANrange elevatorHeight = new CANrange(3);
-  public static final DigitalInput stg2Top = new DigitalInput(0);
-  public static final DigitalInput CarrigeTop = new DigitalInput(1);
-  public static final DigitalInput CarrigeBottom = new DigitalInput(2);
+  public static final DigitalInput stg2Top = new DigitalInput(4);
+  public static final DigitalInput CarrigeTop = new DigitalInput(5);
+  public static final DigitalInput CarrigeBottom = new DigitalInput(6);
 
 
   // controllers
@@ -136,12 +136,12 @@ public class Robot extends TimedRobot {
     elevatorR.configure(config, null, null);
     followerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(true).follow(elevatorR, true);
     elevatorL.configure(followerConfig, null, null);
-
-    config.inverted(false);
-    manLong.configure(config, null, null);
-    followerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(false).follow(manLong, true);
-    manShort.configure(followerConfig, null, null);
-
+  
+    // config.inverted(false);
+    // manLong.configure(config, null, null);
+    // followerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(false).follow(manLong, true);
+    // manShort.configure(followerConfig, null, null);
+    elevatorEncR.reset();
   }
 
   /** This function is run once each time the robot enters autonomous mode. */
@@ -162,8 +162,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
-    System.out.println("WARNING: RESETING ELEVATOR 0");
-    Elevator.reset0();
+    // System.out.println("WARNING: RESETING ELEVATOR 0");
+    // Elevator.reset0();
 
   }
 
@@ -188,13 +188,16 @@ public class Robot extends TimedRobot {
 
     RobotConstants.elevatorHeight = Elevator.RottoIn(elevatorEncR.getDistance());
     // // sets the speed of the elevator motors based on what the operator inputs
-    if (RobotConstants.OpperaaButton) { // lvl1
+    if (RobotConstants.OpperaaButton && !(RobotConstants.OpperarightTrigger > 0 || RobotConstants.OpperarightBumper)) { // lvl1
       elevatorR.set(Elevator.dumbCalcMotSpd(1, RobotConstants.elevatorHeight));
-    } else if (RobotConstants.OpperabButton) { // lvl2
+    } else if (RobotConstants.OpperabButton &&
+        !(RobotConstants.OpperarightTrigger > 0 || RobotConstants.OpperarightBumper)) { // lvl2
       elevatorR.set(Elevator.dumbCalcMotSpd(2, RobotConstants.elevatorHeight));
-    } else if (RobotConstants.OpperaxButton) { // lvl3
-      elevatorR.set(Elevator.dumbCalcMotSpd(3, RobotConstants.elevatorHeight));
-    } else if (RobotConstants.OpperayButton) { // hp
+    } else if (RobotConstants.OpperaxButton &&
+        !(RobotConstants.OpperarightTrigger > 0 || RobotConstants.OpperarightBumper)) { // lvl3
+      elevatorR.set(Elevator.dumbCalcMotSpd(3, RobotConstants.elevatorHeight));   
+    } else if (RobotConstants.OpperayButton &&
+        !(RobotConstants.OpperarightTrigger > 0 || RobotConstants.OpperarightBumper)) { // hp
       elevatorR.set(Elevator.dumbCalcMotSpd(7, RobotConstants.elevatorHeight));
     } else if (RobotConstants.OpperaaButton &&
         (RobotConstants.OpperarightTrigger > 0 || RobotConstants.OpperarightBumper)) { // lvl1r
@@ -212,7 +215,7 @@ public class Robot extends TimedRobot {
 
     left1.set(RobotConstants.DrivleftStick * RobotConstants.robotMaxSpeed);
     right1.set(RobotConstants.DrivrightStick * RobotConstants.robotMaxSpeed);
-    elevatorR.set(RobotConstants.OpperaleftStick * RobotConstants.elevatorMaxSpeed);
+    // elevatorR.set(RobotConstants.OpperaleftStick * RobotConstants.elevatorMaxSpeed);
 
 
   }
