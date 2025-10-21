@@ -16,6 +16,7 @@ import org.ejml.dense.row.linsol.InvertUsingSolve_DDRM;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators.None;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -133,7 +134,7 @@ public class Robot extends TimedRobot {
 
     config.inverted(true);
     elevatorR.configure(config, null, null);
-    followerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(false).follow(elevatorR, true);
+    followerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(true).follow(elevatorR, true);
     elevatorL.configure(followerConfig, null, null);
 
     config.inverted(false);
@@ -171,19 +172,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     UpdatePeriodic.updateControllerInputs();
     UpdatePeriodic.updateSensorValues();
-
-    // if (RobotConstants.DrivyButton) {
-    // elevatorR.set(RobotConstants.elevator_speed);
-    // elevatorL.set(RobotConstants.elevator_speed);
-    // } else if (RobotConstants.DrivaButton) {
-    // // a is down elevator
-    // elevatorR.set(RobotConstants.elevator_speed);
-    // elevatorL.set(RobotConstants.elevator_speed);
-    // } else {
-    // elevatorR.set(0);
-    // elevatorL.set(0);
-    // }
-
+    newTabKevin.add("Elevator Height ", RobotConstants.elevatorHeight);
     // // b is intake
     // if (RobotConstants.DrivbButton) {
     // manShort.set(RobotConstants.intake_speed);
@@ -196,32 +185,35 @@ public class Robot extends TimedRobot {
     // manShort.set(0);
     // manLong.set(0);
     // }
+
+    RobotConstants.elevatorHeight = Elevator.RottoIn(elevatorEncR.getDistance());
     // // sets the speed of the elevator motors based on what the operator inputs
-    // if (RobotConstants.OpperaaButton && (RobotConstants.OpperarightTrigger > 0 ||
-    // RobotConstants.OpperarightBumper)) { // lvl1r
-    // elevatorR.set(Elevator.dumbCalcMotSpd(4, RobotConstants.elevatorHeight));
-    // } else if (RobotConstants.OpperabButton
-    // && (RobotConstants.OpperarightTrigger > 0 ||
-    // RobotConstants.OpperarightBumper)) { // lvl2 r
-    // elevatorR.set(Elevator.dumbCalcMotSpd(5, RobotConstants.elevatorHeight));
-    // } else if (RobotConstants.OpperaxButton
-    // && (RobotConstants.OpperarightTrigger > 0 ||
-    // RobotConstants.OpperarightBumper)) { // lvl3 r
-    // elevatorR.set(Elevator.dumbCalcMotSpd(6, RobotConstants.elevatorHeight));
-    // } else if (RobotConstants.OpperaaButton) { // lvl1
-    // elevatorR.set(Elevator.dumbCalcMotSpd(1, RobotConstants.elevatorHeight));
-    // } else if (RobotConstants.OpperabButton) { // lvl2
-    // elevatorR.set(Elevator.dumbCalcMotSpd(2, RobotConstants.elevatorHeight));
-    // } else if (RobotConstants.OpperaxButton) { // lvl3
-    // elevatorR.set(Elevator.dumbCalcMotSpd(3, RobotConstants.elevatorHeight));
-    // } else if (RobotConstants.OpperayButton) { // hp
-    // elevatorR.set(Elevator.dumbCalcMotSpd(7, RobotConstants.elevatorHeight));
-    // }
+    if (RobotConstants.OpperaaButton) { // lvl1
+      elevatorR.set(Elevator.dumbCalcMotSpd(1, RobotConstants.elevatorHeight));
+    } else if (RobotConstants.OpperabButton) { // lvl2
+      elevatorR.set(Elevator.dumbCalcMotSpd(2, RobotConstants.elevatorHeight));
+    } else if (RobotConstants.OpperaxButton) { // lvl3
+      elevatorR.set(Elevator.dumbCalcMotSpd(3, RobotConstants.elevatorHeight));
+    } else if (RobotConstants.OpperayButton) { // hp
+      elevatorR.set(Elevator.dumbCalcMotSpd(7, RobotConstants.elevatorHeight));
+    } else if (RobotConstants.OpperaaButton &&
+        (RobotConstants.OpperarightTrigger > 0 || RobotConstants.OpperarightBumper)) { // lvl1r
+      elevatorR.set(Elevator.dumbCalcMotSpd(4, RobotConstants.elevatorHeight));
+    } else if (RobotConstants.OpperabButton
+        && (RobotConstants.OpperarightTrigger > 0 ||
+            RobotConstants.OpperarightBumper)) { // lvl2 r
+      elevatorR.set(Elevator.dumbCalcMotSpd(5, RobotConstants.elevatorHeight));
+    } else if (RobotConstants.OpperaxButton
+        && (RobotConstants.OpperarightTrigger > 0 ||
+            RobotConstants.OpperarightBumper)) { // lvl3 r
+      elevatorR.set(Elevator.dumbCalcMotSpd(6, RobotConstants.elevatorHeight));
+    }
 
 
     left1.set(RobotConstants.DrivleftStick * RobotConstants.robotMaxSpeed);
     right1.set(RobotConstants.DrivrightStick * RobotConstants.robotMaxSpeed);
     elevatorR.set(RobotConstants.OpperaleftStick * RobotConstants.elevatorMaxSpeed);
+
 
   }
 

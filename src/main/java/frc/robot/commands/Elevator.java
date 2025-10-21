@@ -53,6 +53,7 @@ public class Elevator {
         desLevel = RobotConstants.humanPlayer;
         break;
       default: // else: return 0
+        System.err.println("Error, invalid level number");
         break;
     }
     double movDist = desLevel - currHeight;
@@ -87,8 +88,9 @@ public class Elevator {
   public static double dumbCalcMotSpd(int desLevel,double currHeight){
     double deltaHeight=calcDist(desLevel, currHeight);
     double rot=inchesToRotations(deltaHeight);
-    return rot/59.625;
+    return rot / 59.625; // 59.625 bc thats how high the elevator can extend
   }
+
 
   public static void reset0(){
     //go down until we see the voltage of motors spike and then we know its at the bottom
@@ -118,6 +120,11 @@ public class Elevator {
     Robot.elevatorR.set(0);
     Robot.elevatorEncL.reset();
     Robot.elevatorEncR.reset();
+    // if using only encoders built into motors
+    RelativeEncoder eleLEncoder = Robot.elevatorL.getEncoder();
+    eleLEncoder.setPosition(0);
+    RelativeEncoder eleREncoder = Robot.elevatorR.getEncoder();
+    eleREncoder.setPosition(0);
   }
 
 }
