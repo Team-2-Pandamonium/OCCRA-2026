@@ -16,7 +16,7 @@ public class RobotConstants {
     public static final double robotMaxSpeed = 1;
 
     // elevator (all values in inches)
-    public static final double elevator_speed = 0.5;
+    public static final double elevatorMaxSpeed = 1;
     public static final double intake_speed = 0.5;
     public static double elevatorHeight;
     public static final double Level1 = 24;
