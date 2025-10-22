@@ -3,6 +3,7 @@ package frc.robot.constants;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import frc.robot.commands.Elevator;
 
 public class RobotConstants {
 
@@ -20,9 +21,11 @@ public class RobotConstants {
     public static double left2Enc;
 
     // elevator (all values in inches)
-    public static final double elevatorMaxSpeed = 1;
+    public static final double elevatorMaxHeight = 60;
+    public static final double elevatorMaxRot = Elevator.RottoIn(elevatorMaxHeight);
     public static final double intake_speed = 0.5;
-    public static double elevatorHeight;
+    public static double elevatorHeight; //height in Inches
+    public static double elevatorRotHeight; //height in rotations
     public static final double Level1 = 24;
     public static final double Level2 = 24 + 17;
     public static final double Level3 = 24 + 17 * 2;

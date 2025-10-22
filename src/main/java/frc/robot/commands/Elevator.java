@@ -84,17 +84,15 @@ public class Elevator {
   }
 
   /**
-   * Acts like the P part of PID control loop
    * 
    * @param desLevel
    * @param currHeight
-   * @return <b>MotorSpeed<b>
-   * @deprecated <b>Will replace With PID loops on motor controllers<b>
+   * @return <b>AmtRot<b>
    */
-  public static double dumbCalcMotSpd(int desLevel,double currHeight){
+  public static double CalcRot(int desLevel,double currHeight){
     double deltaHeight=calcDist(desLevel, currHeight);
     double rot=inchesToRotations(deltaHeight);
-    return rot / RottoIn(59.625); // 59.625 bc thats how high the elevator can extend
+    return rot;
   }
 
 
@@ -104,7 +102,7 @@ public class Elevator {
     double prevCurrentL = Robot.elevatorL.getOutputCurrent();
     double CurrentR = Robot.elevatorR.getOutputCurrent();
     double prevCurrentR = Robot.elevatorR.getOutputCurrent();
-    final double currentThreshold = 3;
+    final double currentThreshold = 0.01;
     while (((!(Math.abs(CurrentR - prevCurrentR) > currentThreshold))
         || (!(Math.abs(CurrentL - prevCurrentL) > currentThreshold))) ||
         Robot.DRIV_CONTROLLER.getLeftStickButton(/* emergancy stop */)) {

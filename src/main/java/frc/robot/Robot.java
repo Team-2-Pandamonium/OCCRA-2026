@@ -98,24 +98,19 @@ public class Robot extends TimedRobot {
   public static final SparkMax left1 = new SparkMax(13, MotorType.kBrushless);
   public static final SparkMax left2 = new SparkMax(14, MotorType.kBrushless);
 
-  // Built in encoders
-  public static final RelativeEncoder manShortEnc = manShort.getEncoder();
-  public static final RelativeEncoder manLongEnc = manLong.getEncoder();
-  public static final RelativeEncoder elevatorREnc = elevatorR.getEncoder();
-  public static final RelativeEncoder elevatorLEnc = elevatorL.getEncoder();
-  public static final RelativeEncoder right1Enc = right1.getEncoder();
-  public static final RelativeEncoder right2Enc = right2.getEncoder();
-  public static final RelativeEncoder left1Enc = left1.getEncoder();
-  public static final RelativeEncoder left2Enc = left2.getEncoder();
+  // Built in encoders (Un-needed unless we want their values for some weird
+  // reason)
+  // public static final RelativeEncoder manShortEnc = manShort.getEncoder();
+  // public static final RelativeEncoder manLongEnc = manLong.getEncoder();
+  // public static final RelativeEncoder elevatorREnc = elevatorR.getEncoder();
+  // public static final RelativeEncoder elevatorLEnc = elevatorL.getEncoder();
+  // public static final RelativeEncoder right1Enc = right1.getEncoder();
+  // public static final RelativeEncoder right2Enc = right2.getEncoder();
+  // public static final RelativeEncoder left1Enc = left1.getEncoder();
+  // public static final RelativeEncoder left2Enc = left2.getEncoder();
   // REV PID loop
-  public static final SparkClosedLoopController manShortREV = manShort.getClosedLoopController();
-  public static final SparkClosedLoopController manLongREV = manLong.getClosedLoopController();
   public static final SparkClosedLoopController elevatorRREV = elevatorR.getClosedLoopController();
   public static final SparkClosedLoopController elevatorLREV = elevatorL.getClosedLoopController();
-  public static final SparkClosedLoopController right1REV = right1.getClosedLoopController();
-  public static final SparkClosedLoopController right2REV = right2.getClosedLoopController();
-  public static final SparkClosedLoopController left1REV = left1.getClosedLoopController();
-  public static final SparkClosedLoopController left2REV = left2.getClosedLoopController();
   //sensors
   public static final Encoder elevatorEnc = new Encoder(0, 1);
   // public static final Encoder elevatorEncL = new Encoder(2, 3);
@@ -186,22 +181,42 @@ public class Robot extends TimedRobot {
         .d(PIDVar.elevatorLD, ClosedLoopSlot.kSlot0);
     elevatorR.configure(configEleR, null, null);
     elevatorL.configure(configEleL, null, null);
-
     SparkMaxConfig configManShort = new SparkMaxConfig();
-    configManShort.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(true).closedLoop        
-        .velocityFF(0)
-        .p(PIDVar.manShortP, ClosedLoopSlot.kSlot0)
-        .i(PIDVar.manShortI, ClosedLoopSlot.kSlot0)
-        .d(PIDVar.manShortD, ClosedLoopSlot.kSlot0);
+    configManShort.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(true)/*
+                                                                                                        * .closedLoop
+                                                                                                        * .velocityFF(0)
+                                                                                                        * .p(PIDVar.
+                                                                                                        * manShortP,
+                                                                                                        * ClosedLoopSlot
+                                                                                                        * .kSlot0)
+                                                                                                        * .i(PIDVar.
+                                                                                                        * manShortI,
+                                                                                                        * ClosedLoopSlot
+                                                                                                        * .kSlot0)
+                                                                                                        * .d(PIDVar.
+                                                                                                        * manShortD,
+                                                                                                        * ClosedLoopSlot
+                                                                                                        * .kSlot0)
+                                                                                                        */;
     SparkMaxConfig configManLong = new SparkMaxConfig();
-    configManLong.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(true).closedLoop
-        .velocityFF(0)
-        .p(PIDVar.manLongP, ClosedLoopSlot.kSlot0)
-        .i(PIDVar.manLongI, ClosedLoopSlot.kSlot0)
-        .d(PIDVar.manLongD, ClosedLoopSlot.kSlot0);
+    configManLong.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(true)/*
+                                                                                                       * .closedLoop
+                                                                                                       * .velocityFF(0)
+                                                                                                       * .p(PIDVar.
+                                                                                                       * manLongP,
+                                                                                                       * ClosedLoopSlot.
+                                                                                                       * kSlot0)
+                                                                                                       * .i(PIDVar.
+                                                                                                       * manLongI,
+                                                                                                       * ClosedLoopSlot.
+                                                                                                       * kSlot0)
+                                                                                                       * .d(PIDVar.
+                                                                                                       * manLongD,
+                                                                                                       * ClosedLoopSlot.
+                                                                                                       * kSlot0)
+                                                                                                       */;
     manShort.configure(configManShort, null, null);
     manLong.configure(configManLong, null, null);
-
     elevatorEnc.reset();
   }
 
@@ -253,45 +268,52 @@ public class Robot extends TimedRobot {
         || RobotConstants.OpperaDPadUpRight || RobotConstants.OpperaDPadRight)) {
 
       if (RobotConstants.OpperaaButton && !(RobotConstants.OpperarightBumper)) { // lvl1
-        elevatorR.set(Elevator.dumbCalcMotSpd(1, RobotConstants.elevatorHeight));
+        elevatorRREV.setReference(Elevator.CalcRot(1, RobotConstants.elevatorHeight), ControlType.kPosition);
       } else if (RobotConstants.OpperabButton &&
           !RobotConstants.OpperarightBumper) { // lvl2
-        elevatorR.set(Elevator.dumbCalcMotSpd(2, RobotConstants.elevatorHeight));
+        elevatorRREV.setReference(Elevator.CalcRot(2, RobotConstants.elevatorHeight), ControlType.kPosition);
       } else if (RobotConstants.OpperaxButton &&
           !RobotConstants.OpperarightBumper) { // lvl3
-        elevatorR.set(Elevator.dumbCalcMotSpd(3, RobotConstants.elevatorHeight));
+        elevatorRREV.setReference(Elevator.CalcRot(3, RobotConstants.elevatorHeight), ControlType.kPosition);
       } else if (RobotConstants.OpperayButton &&
           !RobotConstants.OpperarightBumper) { // hp
-        elevatorR.set(Elevator.dumbCalcMotSpd(7, RobotConstants.elevatorHeight));
+        elevatorRREV.setReference(Elevator.CalcRot(7, RobotConstants.elevatorHeight), ControlType.kPosition);
       } else if (RobotConstants.OpperaaButton &&
           RobotConstants.OpperarightBumper) { // lvl1r
-        elevatorR.set(Elevator.dumbCalcMotSpd(4, RobotConstants.elevatorHeight));
+        elevatorRREV.setReference(Elevator.CalcRot(4, RobotConstants.elevatorHeight), ControlType.kPosition);
       } else if (RobotConstants.OpperabButton
           && RobotConstants.OpperarightBumper) { // lvl2 r
-        elevatorR.set(Elevator.dumbCalcMotSpd(5, RobotConstants.elevatorHeight));
+        elevatorRREV.setReference(Elevator.CalcRot(5, RobotConstants.elevatorHeight), ControlType.kPosition);
       } else if (RobotConstants.OpperaxButton
           && RobotConstants.OpperarightBumper) { // lvl3 r
-        elevatorR.set(Elevator.dumbCalcMotSpd(6, RobotConstants.elevatorHeight));
+        elevatorRREV.setReference(Elevator.CalcRot(6, RobotConstants.elevatorHeight), ControlType.kPosition);
       } else if (RobotConstants.OpperaleftBumper) {
-        elevatorR.set(Elevator.dumbCalcMotSpd(0, RobotConstants.elevatorHeight));
-
+        elevatorRREV.setReference(Elevator.CalcRot(0, RobotConstants.elevatorHeight), ControlType.kPosition);
       }
     } else {
-      if (RobotConstants.OpperaDPadUp) {
+      if (RobotConstants.OpperaDPadUp && RobotConstants.elevatorHeight < RobotConstants.elevatorMaxHeight) {
         elevatorR.set(0.5);
-      } else if (RobotConstants.OpperaDPadUpRight) {
+      } else if (RobotConstants.OpperaDPadUpRight && RobotConstants.elevatorHeight < RobotConstants.elevatorMaxHeight) {
         elevatorR.set(0.2);
-      } else if (RobotConstants.OpperaDPadDown) {
+      } else if (RobotConstants.OpperaDPadDown && RobotConstants.elevatorHeight > 0) {
         elevatorR.set(-0.5);
-      } else if (RobotConstants.OpperaDPadDownRight) {
+      } else if (RobotConstants.OpperaDPadDownRight && RobotConstants.elevatorHeight > 0) {
         elevatorR.set(-0.2);
     }
   }
+  if (RobotConstants.OpperarightTrigger > 0) { // intake
+    manLong.set(RobotConstants.OpperarightTrigger);
+    manLong.set(RobotConstants.OpperarightTrigger);
+  } else if (RobotConstants.OpperaleftTrigger > 0) { // outtake
+    manLong.set(-RobotConstants.OpperaleftTrigger);
+    manLong.set(-RobotConstants.OpperaleftTrigger);
+  } else {
+    manLong.set(RobotConstants.OpperaleftStick);
+    manShort.set(RobotConstants.OpperarightStick);
+  }
 
-    left1.set(RobotConstants.DrivleftStick * RobotConstants.robotMaxSpeed);
-    right1.set(RobotConstants.DrivrightStick * RobotConstants.robotMaxSpeed);
-    // elevatorR.set(RobotConstants.OpperaleftStick * RobotConstants.elevatorMaxSpeed);
-
+  left1.set(RobotConstants.DrivleftStick * RobotConstants.robotMaxSpeed);
+  left2.set(RobotConstants.DrivrightStick * RobotConstants.robotMaxSpeed);
   }
 
   /** This function is called once each time the robot enters test mode. */
