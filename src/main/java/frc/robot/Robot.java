@@ -5,74 +5,22 @@ import frc.robot.commands.Elevator;
 import frc.robot.constants.PIDVar;
 import frc.robot.constants.RobotConstants;
 
-import java.lang.reflect.GenericDeclaration;
-import java.sql.Driver;
-import java.util.Map;
-
-import javax.sound.sampled.Port;
-import javax.swing.ButtonModel;
-
-import org.ejml.dense.row.linsol.InvertUsingSolve_DDRM;
-
-import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.hardware.CANrange;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators.None;
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
-import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkRelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
 
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.SensorUtil;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.XboxController.Button;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-import edu.wpi.first.wpilibj.motorcontrol.PWMMotorController;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.InternalButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
-import java.lang.Math;
-import java.lang.ModuleLayer.Controller;
-
-import edu.wpi.first.wpilibj.Timer;
-
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
-
-import edu.wpi.first.hal.CANData;
-import edu.wpi.first.hal.CANAPITypes.CANDeviceType;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.util.sendable.SendableRegistry;
-import edu.wpi.first.wpilibj.CAN;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 
 /*
  * CONTROL SCHEME
@@ -99,22 +47,12 @@ public class Robot extends TimedRobot {
   public static final SparkMax left1 = new SparkMax(13, MotorType.kBrushless);
   public static final SparkMax left2 = new SparkMax(14, MotorType.kBrushless);
 
-  // Built in encoders (Un-needed unless we want their values for some weird
-  // reason)
-  // public static final RelativeEncoder manShortEnc = manShort.getEncoder();
-  // public static final RelativeEncoder manLongEnc = manLong.getEncoder();
-  // public static final RelativeEncoder elevatorLEnc = elevatorL.getEncoder();
-  // public static final RelativeEncoder right1Enc = right1.getEncoder();
-  // public static final RelativeEncoder right2Enc = right2.getEncoder();
-  // public static final RelativeEncoder left1Enc = left1.getEncoder();
-  // public static final RelativeEncoder left2Enc = left2.getEncoder();
   // REV PID loop
   public static final SparkClosedLoopController elevatorRREV = elevatorR.getClosedLoopController();
   public static final SparkClosedLoopController elevatorLREV = elevatorL.getClosedLoopController();
   //sensors
   public static final RelativeEncoder elevatorEnc = elevatorR.getEncoder();
-  // public static final Encoder elevatorEncL = new Encoder(2, 3);
-  // public static final CANrange elevatorHeight = new CANrange(3);
+
   public static final DigitalInput stg2Top = new DigitalInput(4);
   public static final DigitalInput CarrigeTop = new DigitalInput(5);
   public static final DigitalInput CarrigeBottom = new DigitalInput(6);
@@ -206,25 +144,16 @@ public class Robot extends TimedRobot {
     UpdatePeriodic.updateControllerInputs();
     UpdatePeriodic.updateSensorValues();
     newTabKevin.add("Elevator Height ", RobotConstants.elevatorHeight);
-    // // b is intake
-    // if (RobotConstants.DrivbButton) {
-    // manShort.set(RobotConstants.intake_speed);
-    // manLong.set(-RobotConstants.intake_speed);
-    // } else if (RobotConstants.DrivxButton) {
-    // // x is outake
-    // manShort.set(-RobotConstants.intake_speed);
-    // manLong.set(RobotConstants.intake_speed);
-    // } else {
-    // manShort.set(0);
-    // manLong.set(0);
-    // }
 
+    // ELEVATOR
     RobotConstants.elevatorHeight = Elevator.RottoIn(elevatorEnc.getPosition());
+    Elevator.reset0(false);
     // // sets the speed of the elevator motors based on what the operator inputs
     if (!(RobotConstants.OpperaDPadDown || RobotConstants.OpperaDPadDownRight || RobotConstants.OpperaDPadUp
         || RobotConstants.OpperaDPadUpRight || RobotConstants.OpperaDPadRight)) {
 
-      if (RobotConstants.OpperaaButton && !(RobotConstants.OpperarightBumper)) { // lvl1
+      if (RobotConstants.OpperaaButton &&
+          !(RobotConstants.OpperarightBumper)) { // lvl1
         elevatorRREV.setReference(Elevator.CalcRot(1, RobotConstants.elevatorHeight), ControlType.kPosition);
       } else if (RobotConstants.OpperabButton &&
           !RobotConstants.OpperarightBumper) { // lvl2
@@ -244,7 +173,7 @@ public class Robot extends TimedRobot {
       } else if (RobotConstants.OpperayButton
           && RobotConstants.OpperarightBumper) { // lvl3 r
         elevatorRREV.setReference(Elevator.CalcRot(6, RobotConstants.elevatorHeight), ControlType.kPosition);
-      } else if (RobotConstants.OpperaleftBumper) {
+      } else /* if (RobotConstants.OpperaleftBumper) */ {
         elevatorRREV.setReference(Elevator.CalcRot(0, RobotConstants.elevatorHeight), ControlType.kPosition);
       }
     } else {
@@ -256,8 +185,15 @@ public class Robot extends TimedRobot {
         elevatorR.set(-0.5);
       } else if (RobotConstants.OpperaDPadDownRight && RobotConstants.elevatorHeight > 0) {
         elevatorR.set(-0.2);
-    }
+      }
   }
+
+  if (elevatorR.get() != 0 && (!RobotConstants.stg2Top && !RobotConstants.carrigeTop)) {
+    elevatorR.set(0);
+    System.err.println("ERROR: TRYING TO OVER EXTEND ELEVATOR, setting elevator speed to 0");
+  }
+
+  // MANIPULATOR
   if (RobotConstants.OpperarightTrigger > 0) { // intake
     manLong.set(RobotConstants.OpperarightTrigger);
     manLong.set(RobotConstants.OpperarightTrigger);
@@ -269,8 +205,9 @@ public class Robot extends TimedRobot {
     manShort.set(RobotConstants.OpperarightStick);
   }
 
+  // DRIVE
   left1.set(RobotConstants.DrivleftStick * RobotConstants.robotMaxSpeed);
-  left2.set(RobotConstants.DrivrightStick * RobotConstants.robotMaxSpeed);
+  right1.set(RobotConstants.DrivrightStick * RobotConstants.robotMaxSpeed);
   }
 
   /** This function is called once each time the robot enters test mode. */

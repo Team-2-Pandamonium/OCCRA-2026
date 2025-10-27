@@ -2,18 +2,6 @@ package frc.robot.commands;
 
 import frc.robot.Robot;
 import frc.robot.constants.RobotConstants;
-import frc.robot.constants.PIDVar;
-
-import java.lang.reflect.Type;
-
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkAbsoluteEncoder;
-
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.XboxController.Button;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class UpdatePeriodic {
     /**

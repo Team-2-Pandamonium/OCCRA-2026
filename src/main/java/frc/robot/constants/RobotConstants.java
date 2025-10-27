@@ -1,8 +1,5 @@
 package frc.robot.constants;
 
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.commands.Elevator;
 
 public class RobotConstants {

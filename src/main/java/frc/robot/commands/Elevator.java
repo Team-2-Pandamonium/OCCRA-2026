@@ -1,11 +1,5 @@
 package frc.robot.commands;
 
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkAbsoluteEncoder;
-import com.revrobotics.spark.SparkMax;
-
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import frc.robot.Robot;
 import frc.robot.constants.RobotConstants;
 
@@ -66,15 +60,18 @@ public class Elevator {
 
   public static double inchesToRotations(double inches) {
     double rotations;
-    rotations = (inches * 25.4) / 20;
+    rotations = ((inches * 25.4) / 20);
+    rotations*=9;// mult by 9 for gear ratio
     return rotations;
     // need rps (rotation per second) at max cause number of rotations needed
     // converted to seconds needed, then jst a wait statement
     // btw 1 rotation is 20 mm but maybe innacurate due to vectors with belts (jst
     // multiplied the number of teeth by the dist between them) ;-;
   }
+
   public static double RottoIn(double rot) {
     double in;
+    rot/=9; //gear ratio
     in=(rot*20)/25.4;
     return in;
     // need rps (rotation per second) at max cause number of rotations needed
@@ -96,13 +93,14 @@ public class Elevator {
   }
 
 
-  public static void reset0() { // DO NOT USE RN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    while (Robot.CarrigeBottom.get()) {
-      Robot.elevatorR.set(-0.5);
+  public static void reset0(boolean powered) {
+    if (powered) {
+      while (Robot.CarrigeBottom.get()) {
+        Robot.elevatorR.set(-0.5);
+      }
+      Robot.elevatorR.set(0);
     }
-    Robot.elevatorR.set(0);
-    RelativeEncoder eleREncoder = Robot.elevatorR.getEncoder();
-    eleREncoder.setPosition(0);
+    Robot.elevatorEnc.setPosition(0);
   }
 
 }

@@ -1,7 +1,5 @@
 package frc.robot.constants;
 
-import com.revrobotics.RelativeEncoder;
-
 public class PIDVar {
   // kP
   public static double elevatorRP = 0.01;

@@ -25,12 +25,11 @@ Right Stick - manipulator short arm
 
 TODO:
 (HIGHEST PRIORITY) OVERALL CODE REVIEW TO CATCH OBVIOUS BUGS BEFORE PHYSICAL TESTING
-discuss with drive team if we want safties to prevent moving at full speed with elevator up (and impliment if needed)
 Organize/comment code
 auton
     - move
 test and prob fix elevator 0ing
-shuffleboard documaentation 
+shuffleboard documentation 
     - elevator height
     - camera
     - reset 0 button
