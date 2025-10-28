@@ -38,8 +38,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 public class Robot extends TimedRobot {
 
   //motors
-  public static final SparkMax manShort = new SparkMax(0, MotorType.kBrushless);
-  public static final SparkMax manLong = new SparkMax(1, MotorType.kBrushless);
+  public static final SparkMax manShort = new SparkMax(31, MotorType.kBrushless);
+  public static final SparkMax manLong = new SparkMax(32, MotorType.kBrushless);
   public static final SparkMax elevatorR = new SparkMax(21, MotorType.kBrushless);
   public static final SparkMax elevatorL = new SparkMax(22, MotorType.kBrushless);
   public static final SparkMax right1 = new SparkMax(11, MotorType.kBrushless);
