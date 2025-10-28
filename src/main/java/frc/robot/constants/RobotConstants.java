@@ -1,6 +1,6 @@
 package frc.robot.constants;
 
-import frc.robot.commands.Elevator;
+// import frc.robot.commands.Elevator;
 
 public class RobotConstants {
 
@@ -18,8 +18,8 @@ public class RobotConstants {
     public static double left2Enc;
 
     // elevator (all values in inches)
-    public static final double elevatorMaxHeight = 60;
-    public static final double elevatorMaxRot = Elevator.RottoIn(elevatorMaxHeight);
+    // public static final double elevatorMaxHeight = 60;
+    // public static final double elevatorMaxRot = Elevator.RottoIn(elevatorMaxHeight);
     public static final double intake_speed = 0.5;
     public static double elevatorHeight; //height in Inches
     public static double elevatorRotHeight; //height in rotations
