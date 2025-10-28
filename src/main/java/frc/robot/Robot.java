@@ -156,7 +156,7 @@ public class Robot extends TimedRobot {
     if (RobotConstants.OpperarightStick != 0) {
       elevatorR.set(RobotConstants.OpperarightStick);
     } else {
-      elevatorR.set(RobotConstants.OpperaleftStick);
+      elevatorR.set(RobotConstants.OpperaleftStick*0.1);
     }
 
     if (OPPERA_CONTROLLER.getAButton()) {
