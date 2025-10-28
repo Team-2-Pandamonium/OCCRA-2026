@@ -2,7 +2,9 @@ package frc.robot.commands;
 
 import frc.robot.Robot;
 import frc.robot.constants.RobotConstants;
-
+/**
+ * @deprecated
+ */
 public class Elevator {
   
   /**

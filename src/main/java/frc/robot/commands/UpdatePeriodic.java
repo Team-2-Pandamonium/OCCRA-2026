@@ -128,9 +128,9 @@ public class UpdatePeriodic {
 
     public static void updateSensorValues() {
         RobotConstants.elevatorRotHeight = frc.robot.Robot.elevatorEnc.getPosition();
-        RobotConstants.carrigeBot=frc.robot.Robot.CarrigeBottom.get();
-        RobotConstants.carrigeTop=frc.robot.Robot.CarrigeTop.get();
-        RobotConstants.stg2Top=frc.robot.Robot.stg2Top.get();
+        // RobotConstants.carrigeBot=frc.robot.Robot.CarrigeBottom.get();
+        // RobotConstants.carrigeTop=frc.robot.Robot.CarrigeTop.get();
+        // RobotConstants.stg2Top=frc.robot.Robot.stg2Top.get();
         RobotConstants.elevatorHeight = Elevator.RottoIn(RobotConstants.elevatorRotHeight);
         if (RobotConstants.carrigeBot && RobotConstants.elevatorHeight != 0) {
             System.err.println(

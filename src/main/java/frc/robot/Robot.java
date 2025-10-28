@@ -1,25 +1,25 @@
 package frc.robot;
 
 import frc.robot.commands.UpdatePeriodic;
-import frc.robot.commands.Elevator;
+// import frc.robot.commands.Elevator;
 import frc.robot.constants.PIDVar;
 import frc.robot.constants.RobotConstants;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkBase.ControlType;
+// import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 
-import edu.wpi.first.networktables.GenericEntry;
+// import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+// import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+// import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 
 /*
@@ -38,8 +38,10 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 public class Robot extends TimedRobot {
 
   //motors
-  public static final SparkMax manShort = new SparkMax(0, MotorType.kBrushless);
-  public static final SparkMax manLong = new SparkMax(1, MotorType.kBrushless);
+  // public static final SparkMax manShort = new SparkMax(31,
+  // MotorType.kBrushless);
+  // public static final SparkMax manLong = new SparkMax(32,
+  // MotorType.kBrushless);
   public static final SparkMax elevatorR = new SparkMax(21, MotorType.kBrushless);
   public static final SparkMax elevatorL = new SparkMax(22, MotorType.kBrushless);
   public static final SparkMax right1 = new SparkMax(11, MotorType.kBrushless);
@@ -53,9 +55,9 @@ public class Robot extends TimedRobot {
   //sensors
   public static final RelativeEncoder elevatorEnc = elevatorR.getEncoder();
 
-  public static final DigitalInput stg2Top = new DigitalInput(4);
-  public static final DigitalInput CarrigeTop = new DigitalInput(5);
-  public static final DigitalInput CarrigeBottom = new DigitalInput(6);
+  public static final DigitalInput stg2Top = new DigitalInput(4); //UNUSED
+  public static final DigitalInput CarrigeTop = new DigitalInput(5); //UNUSED
+  public static final DigitalInput CarrigeBottom = new DigitalInput(6); //UNUSED
 
 
   // controllers
@@ -64,9 +66,9 @@ public class Robot extends TimedRobot {
 
 
   // shuffleboard
-  public ShuffleboardTab newTabKevin = Shuffleboard.getTab("KevinTabV2");
-  public GenericEntry cameraRequirement = newTabKevin.add("Camera Requirements", 0).getEntry();
-  public GenericEntry elevatorheight = newTabKevin.add("Elevator Height: ", RobotConstants.elevatorHeight).getEntry();
+  // public ShuffleboardTab newTabKevin = Shuffleboard.getTab("KevinTabV2"); 
+  // public GenericEntry cameraRequirement = newTabKevin.add("Camera Requirements", 0).getEntry();
+  // public GenericEntry elevatorheight = newTabKevin.add("Elevator Height: ", RobotConstants.elevatorHeight).getEntry();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -105,14 +107,14 @@ public class Robot extends TimedRobot {
     elevatorR.configure(configEleR, null, null);
     elevatorL.configure(configEleL, null, null);
 
-    SparkMaxConfig configManShort = new SparkMaxConfig();
-    configManShort.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(true);
-    SparkMaxConfig configManLong = new SparkMaxConfig();
-    configManLong.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(true);
-    manShort.configure(configManShort, null, null);
-    manLong.configure(configManLong, null, null);
+    // SparkMaxConfig configManShort = new SparkMaxConfig();
+    // configManShort.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(true);
+    // SparkMaxConfig configManLong = new SparkMaxConfig();
+    // configManLong.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(true);
+    // manShort.configure(configManShort, null, null);
+    // manLong.configure(configManLong, null, null);
     //reseting 0
-    elevatorEnc.setPosition(0);
+    // elevatorEnc.setPosition(0);
   }
 
   /** This function is run once each time the robot enters autonomous mode. */
@@ -143,67 +145,36 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     UpdatePeriodic.updateControllerInputs();
     UpdatePeriodic.updateSensorValues();
-    newTabKevin.add("Elevator Height ", RobotConstants.elevatorHeight);
+    // newTabKevin.add("Elevator Height ", RobotConstants.elevatorHeight);
+    System.out.println(RobotConstants.elevatorHeight + " elevator height");
 
     // ELEVATOR
-    RobotConstants.elevatorHeight = Elevator.RottoIn(elevatorEnc.getPosition());
-    Elevator.reset0(false);
+    // RobotConstants.elevatorHeight = Elevator.RottoIn(elevatorEnc.getPosition());
+    // Elevator.reset0(false);
     // // sets the speed of the elevator motors based on what the operator inputs
-    if (!(RobotConstants.OpperaDPadDown || RobotConstants.OpperaDPadDownRight || RobotConstants.OpperaDPadUp
-        || RobotConstants.OpperaDPadUpRight || RobotConstants.OpperaDPadRight)) {
 
-      if (RobotConstants.OpperaaButton &&
-          !(RobotConstants.OpperarightBumper)) { // lvl1
-        elevatorRREV.setReference(Elevator.CalcRot(1, RobotConstants.elevatorHeight), ControlType.kPosition);
-      } else if (RobotConstants.OpperabButton &&
-          !RobotConstants.OpperarightBumper) { // lvl2
-        elevatorRREV.setReference(Elevator.CalcRot(2, RobotConstants.elevatorHeight), ControlType.kPosition);
-      } else if (RobotConstants.OpperayButton &&
-          !RobotConstants.OpperarightBumper) { // lvl3
-        elevatorRREV.setReference(Elevator.CalcRot(3, RobotConstants.elevatorHeight), ControlType.kPosition);
-      } else if (RobotConstants.OpperaxButton &&
-          !RobotConstants.OpperarightBumper) { // hp
-        elevatorRREV.setReference(Elevator.CalcRot(7, RobotConstants.elevatorHeight), ControlType.kPosition);
-      } else if (RobotConstants.OpperaaButton &&
-          RobotConstants.OpperarightBumper) { // lvl1r
-        elevatorRREV.setReference(Elevator.CalcRot(4, RobotConstants.elevatorHeight), ControlType.kPosition);
-      } else if (RobotConstants.OpperabButton
-          && RobotConstants.OpperarightBumper) { // lvl2 r
-        elevatorRREV.setReference(Elevator.CalcRot(5, RobotConstants.elevatorHeight), ControlType.kPosition);
-      } else if (RobotConstants.OpperayButton
-          && RobotConstants.OpperarightBumper) { // lvl3 r
-        elevatorRREV.setReference(Elevator.CalcRot(6, RobotConstants.elevatorHeight), ControlType.kPosition);
-      } else /* if (RobotConstants.OpperaleftBumper) */ {
-        elevatorRREV.setReference(Elevator.CalcRot(0, RobotConstants.elevatorHeight), ControlType.kPosition);
-      }
+    if (RobotConstants.OpperarightStick != 0) {
+      elevatorR.set(RobotConstants.OpperarightStick);
     } else {
-      if (RobotConstants.OpperaDPadUp && RobotConstants.elevatorHeight < RobotConstants.elevatorMaxHeight) {
-        elevatorR.set(0.5);
-      } else if (RobotConstants.OpperaDPadUpRight && RobotConstants.elevatorHeight < RobotConstants.elevatorMaxHeight) {
-        elevatorR.set(0.2);
-      } else if (RobotConstants.OpperaDPadDown && RobotConstants.elevatorHeight > 0) {
-        elevatorR.set(-0.5);
-      } else if (RobotConstants.OpperaDPadDownRight && RobotConstants.elevatorHeight > 0) {
-        elevatorR.set(-0.2);
-      }
-  }
+      elevatorR.set(RobotConstants.OpperaleftStick);
+    }
 
-  if (elevatorR.get() != 0 && (!RobotConstants.stg2Top && !RobotConstants.carrigeTop)) {
-    elevatorR.set(0);
-    System.err.println("ERROR: TRYING TO OVER EXTEND ELEVATOR, setting elevator speed to 0");
-  }
+    if (OPPERA_CONTROLLER.getAButton()) {
+      elevatorEnc.setPosition(0);
+      System.out.println("Reseting 0");
+    }
 
   // MANIPULATOR
-  if (RobotConstants.OpperarightTrigger > 0) { // intake
-    manLong.set(RobotConstants.OpperarightTrigger);
-    manLong.set(RobotConstants.OpperarightTrigger);
-  } else if (RobotConstants.OpperaleftTrigger > 0) { // outtake
-    manLong.set(-RobotConstants.OpperaleftTrigger);
-    manLong.set(-RobotConstants.OpperaleftTrigger);
-  } else {
-    manLong.set(RobotConstants.OpperaleftStick);
-    manShort.set(RobotConstants.OpperarightStick);
-  }
+  // if (RobotConstants.OpperarightTrigger > 0) { // intake
+  // manLong.set(RobotConstants.OpperarightTrigger);
+  // manLong.set(RobotConstants.OpperarightTrigger);
+  // } else if (RobotConstants.OpperaleftTrigger > 0) { // outtake
+  // manLong.set(-RobotConstants.OpperaleftTrigger);
+  // manLong.set(-RobotConstants.OpperaleftTrigger);
+  // } else {
+  // manLong.set(RobotConstants.OpperaleftStick);
+  // manShort.set(RobotConstants.OpperarightStick);
+  // }
 
   // DRIVE
   left1.set(RobotConstants.DrivleftStick * RobotConstants.robotMaxSpeed);
