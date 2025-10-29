@@ -210,6 +210,7 @@ public class Robot extends TimedRobot {
        * ControlType.kPosition);
        * }
        */
+      // make it be less than the elevator max speed and not jsut proportional to the dist from setpoint
       if (RobotConstants.OpperaaButton &&
           !(RobotConstants.OpperarightBumper)) { // lvl1
         elevatorR.set(Elevator.CalcRot(1, RobotConstants.elevatorHeight)
