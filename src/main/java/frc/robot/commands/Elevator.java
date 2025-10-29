@@ -26,25 +26,25 @@ public class Elevator {
         desLevel = 0;
         break;
       case 1: // 1st shelf
-        desLevel = RobotConstants.Level1;
+        desLevel = RobotConstants.Level1GrdOff;
         break;
       case 2: // 2nd shelf
-        desLevel = RobotConstants.Level2;
+        desLevel = RobotConstants.Level2GrdOff;
         break;
       case 3: // 3rd shelf
-        desLevel = RobotConstants.Level3;
+        desLevel = RobotConstants.Level3GrdOff;
         break;
       case 4: // 1st shelf but rotate
-        desLevel = RobotConstants.Level1 - 2;
+        desLevel = RobotConstants.Level1GrdOff - 2;
         break;
       case 5: // 2nd shelf but rotate
-        desLevel = RobotConstants.Level2 - 2;
+        desLevel = RobotConstants.Level2GrdOff - 2;
         break;
       case 6: // 3rd shelf but rotate+
-        desLevel = RobotConstants.Level3 - 2;
+        desLevel = RobotConstants.Level3GrdOff - 2;
         break;
       case 7: // human player station
-        desLevel = RobotConstants.humanPlayer;
+        desLevel = RobotConstants.humanPlayerGrdOff;
         break;
       default: // else: return 0
         System.err.println("Error, invalid level number");
@@ -60,14 +60,7 @@ public class Elevator {
    * @return <b>rotations<b>
    */
   public static double inchesToRotations(double inches) {
-    double rotations;
-    rotations = ((inches * 25.4) / 20);
-    rotations*=9;// mult by 9 for gear ratio
-    return rotations;
-    // need rps (rotation per second) at max cause number of rotations needed
-    // converted to seconds needed, then jst a wait statement
-    // btw 1 rotation is 20 mm but maybe innacurate due to vectors with belts (jst
-    // multiplied the number of teeth by the dist between them) ;-;
+    return inches * 0.761475409836066; // determined experimentally
   }
 
   /**
@@ -76,14 +69,7 @@ public class Elevator {
    * @return <b>In<b>
    */
   public static double RottoIn(double rot) {
-    double in;
-    rot/=9; //gear ratio
-    in=(rot*20)/25.4;
-    return in;
-    // need rps (rotation per second) at max cause number of rotations needed
-    // converted to seconds needed, then jst a wait statement
-    // btw 1 rotation is 20 mm but maybe innacurate due to vectors with belts (jst
-    // multiplied the number of teeth by the dist between them) ;-;
+    return rot * 1.31324004305705; // determined experimentally
   }
 
   /**
@@ -98,18 +84,18 @@ public class Elevator {
     return rot;
   }
 
-/**
- * 
- * @param powered (use the motors to go to the 0 point or not)
- */
-  public static void reset0(boolean powered) {
-    if (powered) {
-      while (Robot.CarrigeBottom.get()) {
-        Robot.elevatorR.set(-0.5);
-      }
-      Robot.elevatorR.set(0);
-    }
-    Robot.elevatorEnc.setPosition(0);
-  }
+  // /**
+  // *
+  // * @param powered (use the motors to go to the 0 point or not)
+  // */
+  // public static void reset0(boolean powered) {
+  // if (powered) {
+  // while (Robot.CarrigeBottom.get()) {
+  // Robot.elevatorR.set(-0.5);
+  // }
+  // Robot.elevatorR.set(0);
+  // }
+  // Robot.elevatorEnc.setPosition(0);
+  // }
 
 }
