@@ -307,26 +307,28 @@ public class Robot extends TimedRobot {
     manShort.set(Math.abs(RobotConstants.OpperarightStick) * RobotConstants.OpperarightStick);
   }
   // DRIVE
-  // if(RobotConstants.DrivleftBumper || RobotConstants.DrivrightBumper){
-  //   drivModeTimer.reset();
-  // }
+
   if(drivModeTimer.get()>=0.25){
   RobotConstants.slowMode ^= RobotConstants.DrivleftBumper;
   RobotConstants.turboMode ^= RobotConstants.DrivrightBumper;
   drivModeTimer.reset();
   }
-
   if (RobotConstants.slowMode&&RobotConstants.turboMode) {
     RobotConstants.turboMode = false;
     RobotConstants.slowMode = false;
   }
-
   if (RobotConstants.slowMode) {
     RobotConstants.robotAccMaxSpeed = RobotConstants.slowModeMaxSpeed;
   } else {
     RobotConstants.robotAccMaxSpeed = RobotConstants.robotMaxSpeed;
   }
-  if (!RobotConstants.turboMode) {
+
+  if (RobotConstants.topEndstop) {
+    RobotConstants.turboMode=false;
+    RobotConstants.slowMode=true;
+  }
+
+  if (RobotConstants.turboMode==false) {
     left1
         .set((Math.abs(RobotConstants.DrivleftStick) * RobotConstants.DrivleftStick) * RobotConstants.robotAccMaxSpeed);
     right1.set(
@@ -336,7 +338,7 @@ public class Robot extends TimedRobot {
     right1.set(RobotConstants.DrivrightStick);
   }
   // System.out.println("Turbo: "+RobotConstants.turboMode+" Slow: "+RobotConstants.slowMode);
-  System.out.println(elevatorR.getOutputCurrent());
+  // System.out.println(elevatorR.getOutputCurrent());
 }
   /** This function is called once each time the robot enters test mode. */
   @Override
