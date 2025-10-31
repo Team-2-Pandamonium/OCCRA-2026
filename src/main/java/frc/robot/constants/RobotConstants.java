@@ -26,16 +26,14 @@ public class RobotConstants {
     public static final double elevatorMaxHeight = 60;
     public static final double elevatorMaxRot = 76.25; //EXPERIMENTALLY DETERMINED
     public static final double elevatorMaxSpeed = 0.75;
-    public static double elevatorHeight; //height in Inches
     public static double elevatorRotHeight; //height in rotations
+    // the values for heights are measured in rotations and are EXPERIMENTALLY DETERMINED
     public static final double Level1 = 24;
-    public static final double Level1GrdOff = 24 - GrdOff;
     public static final double Level2 = 24 + 17;
-    public static final double Level2GrdOff = 24 + 17 - GrdOff;
     public static final double Level3 = 24 + 17 * 2;
-    public static final double Level3GrdOff = 24 + 17 * 2 - GrdOff;
     public static final double humanPlayer = 35;
-    public static final double humanPlayerGrdOff = 35 - GrdOff;
+    public static final double vertIndex=3;
+    public static final double maxHgtSlowThrthHld=72;
     public static boolean carrigeTop;
     public static boolean stg2Top;
     public static boolean carrigeBot;

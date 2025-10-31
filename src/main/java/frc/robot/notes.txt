@@ -1,11 +1,9 @@
-WARNINGS:
-DO NOT START THE ROBOT WITHOUT THE ELEVATOR IN THE 0 POSITION
-
 CONTROL SCHEME:
 Driver:
 left stick - left side wheels
 right stick - right side wheels
-bumper L&R - turbo mode
+RB - turbo mode
+LB - slow mode
 
 Opperator:
 Y - Level 3
@@ -24,14 +22,10 @@ Left Stick - manipulator long arm
 Right Stick - manipulator short arm
 
 TODO:
-(HIGHEST PRIORITY) OVERALL CODE REVIEW TO CATCH OBVIOUS BUGS BEFORE PHYSICAL TESTING
-Organize/comment code
 auton
     - move
-test and prob fix elevator 0ing
 shuffleboard documentation 
     - elevator height
     - camera
     - reset 0 button
-    - make dumb button? (start ignoring sensors)
 elevator trajectory planning instead of pid (LOW PRIORITY)

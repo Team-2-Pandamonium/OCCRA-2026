@@ -131,16 +131,23 @@ public class UpdatePeriodic {
         RobotConstants.carrigeBot=frc.robot.Robot.CarrigeBottom.get();
         RobotConstants.carrigeTop=frc.robot.Robot.CarrigeTop.get();
         RobotConstants.stg2Top=frc.robot.Robot.stg2Top.get();
-        RobotConstants.elevatorHeight = Elevator.RottoIn(RobotConstants.elevatorRotHeight);
+        // RobotConstants.elevatorHeight = Elevator.RottoIn(RobotConstants.elevatorRotHeight);
+
         if (RobotConstants.carrigeBot == false) {
             RobotConstants.bottEndstop = true;
+            System.out.println("at bottom");
         }else{
             RobotConstants.bottEndstop=false;
+            System.out.println("not at bottom");
         }
-        if (RobotConstants.stg2Top == false && RobotConstants.carrigeTop == false) {
+
+        if ((RobotConstants.stg2Top == false) && (RobotConstants.carrigeTop == false)) {
             RobotConstants.topEndstop = true;
+            System.out.println("at top");
         } else {
             RobotConstants.topEndstop = false;
+            System.out.println("not at top");
         }
+
     }
 }

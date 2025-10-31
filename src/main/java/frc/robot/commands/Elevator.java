@@ -17,34 +17,35 @@ public class Elevator {
    * @apiNote 6 = 3rd shelf indexing
    * @apiNote 7 = HP station
    * @param level
+   * @param currHeight (in rotations)
    * @return <b>movDist<b>
    */
-  public static double calcDist(int level,double currHeight) {
+  public static double CalcRot(int level,double currHeight) {
     double desLevel = 0;
     switch (level) {
       case 0:
         desLevel = 0;
         break;
       case 1: // 1st shelf
-        desLevel = RobotConstants.Level1GrdOff;
+        desLevel = RobotConstants.Level1;
         break;
       case 2: // 2nd shelf
-        desLevel = RobotConstants.Level2GrdOff;
+        desLevel = RobotConstants.Level2;
         break;
       case 3: // 3rd shelf
-        desLevel = RobotConstants.Level3GrdOff;
+        desLevel = RobotConstants.Level3;
         break;
       case 4: // 1st shelf but rotate
-        desLevel = RobotConstants.Level1GrdOff - 2;
+        desLevel = RobotConstants.Level1 - RobotConstants.vertIndex;
         break;
       case 5: // 2nd shelf but rotate
-        desLevel = RobotConstants.Level2GrdOff - 2;
+        desLevel = RobotConstants.Level2 - RobotConstants.vertIndex;
         break;
       case 6: // 3rd shelf but rotate+
-        desLevel = RobotConstants.Level3GrdOff - 2;
+        desLevel = RobotConstants.Level3 - RobotConstants.vertIndex;
         break;
       case 7: // human player station
-        desLevel = RobotConstants.humanPlayerGrdOff;
+        desLevel = RobotConstants.humanPlayer;
         break;
       default: // else: return 0
         System.err.println("Error, invalid level number");
@@ -54,35 +55,23 @@ public class Elevator {
     return movDist;
   }
 
-  /**
-   * 
-   * @param inches
-   * @return <b>rotations<b>
-   */
-  public static double inchesToRotations(double inches) {
-    return inches * 0.761475409836066; // determined experimentally
-  }
+  // /**
+  // * @deprecated
+  // * @param inches
+  // * @return <b>rotations<b>
+  // */
+  // public static double inchesToRotations(double inches) {
+  // return inches * 0.761475409836066; // determined experimentally
+  // }
 
-  /**
-   * 
-   * @param rot
-   * @return <b>In<b>
-   */
-  public static double RottoIn(double rot) {
-    return rot * 1.31324004305705; // determined experimentally
-  }
-
-  /**
-   * 
-   * @param desLevel
-   * @param currHeight
-   * @return <b>AmtRot<b>
-   */
-  public static double CalcRot(int desLevel,double currHeight){
-    double deltaHeight=calcDist(desLevel, currHeight);
-    double rot=inchesToRotations(deltaHeight);
-    return rot;
-  }
+  // /**
+  // * @deprecated
+  // * @param rot
+  // * @return <b>In<b>
+  // */
+  // public static double RottoIn(double rot) {
+  // return rot * 1.31324004305705; // determined experimentally
+  // }
 
   /**
   *
