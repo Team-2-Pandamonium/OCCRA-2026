@@ -135,18 +135,18 @@ public class UpdatePeriodic {
 
         if (RobotConstants.carrigeBot == false) {
             RobotConstants.bottEndstop = true;
-            System.out.println("at bottom");
+            // System.out.println("at bottom");
         }else{
             RobotConstants.bottEndstop=false;
-            System.out.println("not at bottom");
+            // System.out.println("not at bottom");
         }
 
         if ((RobotConstants.stg2Top == false) && (RobotConstants.carrigeTop == false)) {
             RobotConstants.topEndstop = true;
-            System.out.println("at top");
+            // System.out.println("at top");
         } else {
             RobotConstants.topEndstop = false;
-            System.out.println("not at top");
+            // System.out.println("not at top");
         }
 
     }

@@ -1,17 +1,19 @@
 package frc.robot.constants;
 
+import edu.wpi.first.cameraserver.CameraServer;
+
 public class RobotConstants {
 
     // public static final double leftDrift = 1; // at least one drift should be 1,
     // both if drivebase if fine.
     // public static final double rightDrift = 1;
-    public static final double autonSpeed = .5;
+    public static final double autonSpeed = 0.1;
     public static final double Drivdeadzone = .03;
     public static final double Oppdeadzone = .07;
 
     // driving
     public static final double robotMaxSpeed = 0.5;
-    public static final double slowModeMaxSpeed = 0.25;
+    public static double slowModeMaxSpeed = 0.125;
     public static double robotAccMaxSpeed = 0.5;
     public static boolean slowMode=false;
     public static boolean turboMode=false;
@@ -21,18 +23,15 @@ public class RobotConstants {
     public static double left2Enc;
 
     // elevator (all values in inches)
-    public static final double kPoffset=25;
-    public static final double GrdOff=(8+9/16);
+    public static final double kPoffset = 25;
     public static final double elevatorMaxHeight = 60;
     public static final double elevatorMaxRot = 76.25; //EXPERIMENTALLY DETERMINED
     public static final double elevatorMaxSpeed = 0.75;
     public static double elevatorRotHeight; //height in rotations
     // the values for heights are measured in rotations and are EXPERIMENTALLY DETERMINED
-    public static final double Level1 = 24;
-    public static final double Level2 = 24 + 17;
-    public static final double Level3 = 24 + 17 * 2;
-    public static final double humanPlayer = 35;
-    public static final double vertIndex=3;
+    public static final double Level1 = 24 + 6;
+    public static final double Level2 = 24 + 17 + 6;
+    public static final double Level3 = 24 + (17 * 2) + 6;
     public static final double maxHgtSlowThrthHld=72;
     public static boolean carrigeTop;
     public static boolean stg2Top;
@@ -41,7 +40,7 @@ public class RobotConstants {
     public static boolean topEndstop;
     public static boolean bottEndstop;
     public static boolean otherInputMethod;
-    // manipulaor
+    // manipulator
     public static final double manMaxSPD=0.1;
 
     // inputs, driver

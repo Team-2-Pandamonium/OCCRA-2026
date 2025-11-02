@@ -35,34 +35,22 @@ public class Elevator {
       case 3: // 3rd shelf
         desLevel = RobotConstants.Level3;
         break;
-      case 4: // 1st shelf but rotate
-        desLevel = RobotConstants.Level1 - RobotConstants.vertIndex;
-        break;
-      case 5: // 2nd shelf but rotate
-        desLevel = RobotConstants.Level2 - RobotConstants.vertIndex;
-        break;
-      case 6: // 3rd shelf but rotate+
-        desLevel = RobotConstants.Level3 - RobotConstants.vertIndex;
-        break;
-      case 7: // human player station
-        desLevel = RobotConstants.humanPlayer;
-        break;
       default: // else: return 0
         System.err.println("Error, invalid level number");
         break;
     }
-    double movDist = desLevel - currHeight;
+    double movDist = InToRot(desLevel) - currHeight;
     return movDist;
   }
 
-  // /**
-  // * @deprecated
-  // * @param inches
-  // * @return <b>rotations<b>
-  // */
-  // public static double inchesToRotations(double inches) {
-  // return inches * 0.761475409836066; // determined experimentally
-  // }
+  /**
+  * @deprecated
+  * @param inches
+  * @return <b>rotations<b>
+  */
+  public static double InToRot(double inches) {
+  return inches * 0.761475409836066; // determined experimentally
+  }
 
   // /**
   // * @deprecated
