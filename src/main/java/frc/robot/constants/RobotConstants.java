@@ -1,7 +1,5 @@
 package frc.robot.constants;
 
-import edu.wpi.first.cameraserver.CameraServer;
-
 public class RobotConstants {
 
     // public static final double leftDrift = 1; // at least one drift should be 1,
@@ -39,7 +37,6 @@ public class RobotConstants {
     public static double elevatorOutput;
     public static boolean topEndstop;
     public static boolean bottEndstop;
-    public static boolean otherInputMethod;
     // manipulator
     public static final double manMaxSPD=0.1;
 

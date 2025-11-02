@@ -7,11 +7,9 @@ LB - slow mode
 
 Opperator:
 Y - Level 3
-B - Level 2
+X - Level 2
 A - Level 1
-X - HP station
-Level_Button+RB - level rotate
-LB - elevator 0
+B - go to 0
 DPad_Up - elevator up ("fast")
 DPad_Up_Right - elevator up ("slow")
 DPad_Down - elevator down ("fast")
@@ -22,10 +20,9 @@ Left Stick - manipulator long arm
 Right Stick - manipulator short arm
 
 TODO:
-auton
-    - move
 shuffleboard documentation 
     - elevator height
     - camera
-    - reset 0 button
 elevator trajectory planning instead of pid (LOW PRIORITY)
+
+Code is like women, make it happy and it won't yell at you in red lines

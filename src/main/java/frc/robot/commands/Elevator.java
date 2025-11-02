@@ -18,9 +18,9 @@ public class Elevator {
    * @apiNote 7 = HP station
    * @param level
    * @param currHeight (in rotations)
-   * @return <b>movDist<b>
+   * @return <b>movDist<b> (in rotations)
    */
-  public static double CalcRot(int level,double currHeight) {
+  public static double CalcDist(int level, double currHeight) {
     double desLevel = 0;
     switch (level) {
       case 0:
@@ -44,22 +44,24 @@ public class Elevator {
   }
 
   /**
-  * @deprecated
-  * @param inches
-  * @return <b>rotations<b>
-  */
+   * @param inches
+   * @return <b>rotations<b>
+   */
   public static double InToRot(double inches) {
-  return inches * 0.761475409836066; // determined experimentally
+    double cir = Math.PI * 2.256; // in inches
+    double rot = inches / cir;
+    return rot;
   }
 
-  // /**
-  // * @deprecated
-  // * @param rot
-  // * @return <b>In<b>
-  // */
-  // public static double RottoIn(double rot) {
-  // return rot * 1.31324004305705; // determined experimentally
-  // }
+  /**
+   * @param rot
+   * @return <b>In<b>
+   */
+  public static double RotToIn(double rot) {
+    double cir = Math.PI * 2.256; // in inches
+    double In = rot * cir;
+    return In;
+  }
 
   /**
   *
