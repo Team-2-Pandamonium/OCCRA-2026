@@ -50,6 +50,7 @@ public class Elevator {
   public static double InToRot(double inches) {
     double cir = Math.PI * 2.256; // in inches
     double rot = inches / cir;
+    rot *= 9; // gear ratio
     return rot;
   }
 
@@ -58,6 +59,7 @@ public class Elevator {
    * @return <b>In<b>
    */
   public static double RotToIn(double rot) {
+    rot /= 9; // gear ratio
     double cir = Math.PI * 2.256; // in inches
     double In = rot * cir;
     return In;
