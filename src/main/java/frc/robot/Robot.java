@@ -280,6 +280,8 @@ public class Robot extends TimedRobot {
     elevatorR.set(RobotConstants.elevatorOutput); // only time elevator speed actually gets set in the
 
     // MANIPULATOR
+    
+    /* 
     RobotConstants.manLeftOutput=Math.abs(Manipulator.LinVeltoManRot(Manipulator.drvRotLinVel(drvLEnc.getVelocity()))); //always positive
     RobotConstants.manRightOutput=Math.abs(Manipulator.LinVeltoManRot(Manipulator.drvRotLinVel(drvREnc.getVelocity()))); //always positive
     if(RobotConstants.manLeftOutput==0){
@@ -288,18 +290,25 @@ public class Robot extends TimedRobot {
     if(RobotConstants.manRightOutput==0){
       RobotConstants.manRightOutput=1;
     }
-
+    
+    */
     if (RobotConstants.OpperarightTrigger > 0) { // intake
-      manLeftPID.setReference(-RobotConstants.manLeftOutput*RobotConstants.manMaxSPD,ControlType.kVelocity);
-      manRightPID.setReference(-RobotConstants.manRightOutput*RobotConstants.manMaxSPD,ControlType.kVelocity);
+      // manLeftPID.setReference(-RobotConstants.manLeftOutput*RobotConstants.manMaxSPD,ControlType.kVelocity);
+      // manRightPID.setReference(-RobotConstants.manRightOutput*RobotConstants.manMaxSPD,ControlType.kVelocity);
+      manLeft.set(RobotConstants.OpperarightTrigger*RobotConstants.manMaxSPD);
+      manRight.set(RobotConstants.OpperarightTrigger*RobotConstants.manMaxSPD);
 
     } else if (RobotConstants.OpperaleftTrigger > 0) { // outtake
-      manLeftPID.setReference(RobotConstants.manLeftOutput*RobotConstants.manMaxSPD,ControlType.kVelocity);
-      manRightPID.setReference(RobotConstants.manRightOutput*RobotConstants.manMaxSPD,ControlType.kVelocity);
+      // manLeftPID.setReference(RobotConstants.manLeftOutput*RobotConstants.manMaxSPD,ControlType.kVelocity);
+      // manRightPID.setReference(RobotConstants.manRightOutput*RobotConstants.manMaxSPD,ControlType.kVelocity);
+      manLeft.set(-RobotConstants.OpperaleftTrigger*RobotConstants.manMaxSPD);
+      manRight.set(-RobotConstants.OpperaleftTrigger*RobotConstants.manMaxSPD);
 
     } else if (RobotConstants.OpperabButton) {
-      manLeftPID.setReference(-(RobotConstants.manLeftOutput/2)*RobotConstants.manMaxSPD,ControlType.kVelocity);
-      manRightPID.setReference(-(RobotConstants.manRightOutput/2)*RobotConstants.manMaxSPD,ControlType.kVelocity);
+      // manLeftPID.setReference(-(RobotConstants.manLeftOutput/2)*RobotConstants.manMaxSPD,ControlType.kVelocity);
+      // manRightPID.setReference(-(RobotConstants.manRightOutput/2)*RobotConstants.manMaxSPD,ControlType.kVelocity);
+      manLeft.set(RobotConstants.manMaxSPD/2);
+      manRight.set(-RobotConstants.manMaxSPD/2);
 
     } else { // manual control
       manLeft.set(Math.abs(RobotConstants.OpperaleftStick) * RobotConstants.OpperaleftStick);
