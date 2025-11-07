@@ -2,6 +2,7 @@ package frc.robot;
 
 import frc.robot.commands.UpdatePeriodic;
 import frc.robot.commands.Elevator;
+import frc.robot.commands.Manipulator;
 import frc.robot.constants.PIDVar;
 import frc.robot.constants.RobotConstants;
 
@@ -19,21 +20,20 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-
-
+ 
 
 public class Robot extends TimedRobot {
 
   //motors
-  public static final SparkMax manShort = new SparkMax(31, MotorType.kBrushless);
-  public static final SparkMax manLong = new SparkMax(32, MotorType.kBrushless);
+  public static final SparkMax manRight = new SparkMax(31, MotorType.kBrushless);
+  public static final SparkMax manLeft = new SparkMax(32, MotorType.kBrushless);
   public static final SparkMax elevatorR = new SparkMax(21, MotorType.kBrushless);
   public static final SparkMax elevatorL = new SparkMax(22, MotorType.kBrushless);
   public static final SparkMax right1 = new SparkMax(11, MotorType.kBrushless);
@@ -42,10 +42,14 @@ public class Robot extends TimedRobot {
   public static final SparkMax left2 = new SparkMax(14, MotorType.kBrushless);
 
   // PID loop
-  public static final PIDController elevRpid = new PIDController(PIDVar.elevatorRP, PIDVar.elevatorRI,
-      PIDVar.elevatorRD);
-  // public static final PIDController elevLpid = new
-  // PIDController(PIDVar.elevatorLP, PIDVar.elevatorRI, PIDVar.elevatorRD);
+  public static final SparkClosedLoopController manLeftPID=manLeft.getClosedLoopController();
+  public static final SparkClosedLoopController manRightPID=manRight.getClosedLoopController();
+
+
+
+  //PID encoders
+  public static final RelativeEncoder drvLEnc = left1.getEncoder();
+  public static final RelativeEncoder drvREnc = right1.getEncoder();
 
   //sensors
   public static final RelativeEncoder elevatorEnc = elevatorR.getEncoder();
@@ -58,19 +62,12 @@ public class Robot extends TimedRobot {
   public static final UsbCamera camera = CameraServer.startAutomaticCapture();
 
   // controllers
-  public static final XboxController DRIV_CONTROLLER = new XboxController(0);
+  public static final PS5Controller DRIV_CONTROLLER = new PS5Controller(0);
   public static final XboxController OPPERA_CONTROLLER = new XboxController(1);
 
   // Timers :(
   public static final Timer drivModeTimer=new Timer();
   public static final Timer autonTimer = new Timer();
-
-  // shuffleboard
-  // public ShuffleboardTab newTabKevin = Shuffleboard.getTab("KevinTabV2");
-  // public GenericEntry cameraRequirement = newTabKevin.add("Camera
-  // Requirements", 0).getEntry();
-  // public GenericEntry elevatorheight = newTabKevin.add("Elevator Height: ",
-  // RobotConstants.elevatorHeight).getEntry();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -95,18 +92,26 @@ public class Robot extends TimedRobot {
     left2.configure(configL2, null, null);
 
     SparkMaxConfig configEleR = new SparkMaxConfig();
-    configEleR.idleMode(IdleMode.kBrake).smartCurrentLimit(50).disableFollowerMode().inverted(false);
+    configEleR.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(false);
     SparkMaxConfig configEleL = new SparkMaxConfig();
-    configEleL.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(false).follow(elevatorR, true);
+    configEleL.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(false).follow(elevatorR, true);
     elevatorR.configure(configEleR, null, null);
     elevatorL.configure(configEleL, null, null);
 
-    SparkMaxConfig configManShort = new SparkMaxConfig();
-    configManShort.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(true);
-    SparkMaxConfig configManLong = new SparkMaxConfig();
-    configManLong.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(false);
-    manShort.configure(configManShort, null, null);
-    manLong.configure(configManLong, null, null);
+    SparkMaxConfig configManRight = new SparkMaxConfig();
+    configManRight.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(true).closedLoop
+        .pid(PIDVar.manRightP,
+            PIDVar.manRightI,
+            PIDVar.manRightD,
+            ClosedLoopSlot.kSlot0);
+    SparkMaxConfig configManLeft = new SparkMaxConfig();
+    configManLeft.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(false).closedLoop
+        .pid(PIDVar.manLeftP,
+            PIDVar.manLeftI,
+            PIDVar.manLeftD,
+            ClosedLoopSlot.kSlot0);
+    manRight.configure(configManRight, null, null);
+    manLeft.configure(configManLeft, null, null);
 
   }
 
@@ -121,12 +126,64 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    if (autonTimer.get() <= 5) {
+    if (autonTimer.get() <= 1) {
+      manLeft.set(1);
+      manRight.set(1);
+      right1.set(-RobotConstants.autonSpeed*2.5);
+      left1.set(-RobotConstants.autonSpeed*2.5);
+    } else if (autonTimer.get() <=3 && autonTimer.get() > 1) {
+      right1.set(RobotConstants.autonSpeed);
+      left1.set(-RobotConstants.autonSpeed);
+    } else if (autonTimer.get() <=4 && autonTimer.get() > 3) {
+      right1.set(-RobotConstants.autonSpeed*2.5);
+      left1.set(-RobotConstants.autonSpeed*2.5);
+    } else if (autonTimer.get() <=5 && autonTimer.get() > 4) {
+      elevatorL.set(0.5);
+      elevatorR.set(0.5);
+    } else if (autonTimer.get() <=6 && autonTimer.get() > 5) {
+      right1.set(-RobotConstants.autonSpeed*2.5);
+      left1.set(-RobotConstants.autonSpeed*2.5);
+    } else if (autonTimer.get() <=7 && autonTimer.get() > 6) {
+      manLeft.set(-1);
+      manRight.set(-1);
+    } else if (autonTimer.get() <=7.5 && autonTimer.get() > 7) {
+      right1.set(RobotConstants.autonSpeed*2.5);
+      left1.set(RobotConstants.autonSpeed*2.5);
+      elevatorL.set(-0.5);
+      elevatorR.set(-0.5);
+    } else if (autonTimer.get() <=8 && autonTimer.get() > 7.5) {
+      right1.set(-RobotConstants.autonSpeed);
+      left1.set(RobotConstants.autonSpeed);
+    } else if (autonTimer.get() <=8.5 && autonTimer.get() > 8) {
+      right1.set(-RobotConstants.autonSpeed);
+      left1.set(RobotConstants.autonSpeed);
+      manLeft.set(1);
+      manRight.set(1);
+    } else if (autonTimer.get() <=9 && autonTimer.get() > 8.5) {
+      right1.set(-RobotConstants.autonSpeed*2.5);
+      left1.set(-RobotConstants.autonSpeed*2.5);
+    } else if (autonTimer.get() <=10 && autonTimer.get() > 9) {
+      right1.set(RobotConstants.autonSpeed*2.5);
+      left1.set(RobotConstants.autonSpeed*2.5);
+    } else if (autonTimer.get() <=10.5 && autonTimer.get() > 10) {
+      right1.set(RobotConstants.autonSpeed);
+      left1.set(-RobotConstants.autonSpeed);
+      elevatorL.set(0.5);
+      elevatorR.set(0.5);
+    } else if (autonTimer.get() <=11 && autonTimer.get() > 10.5) {
+      right1.set(RobotConstants.autonSpeed);
+      left1.set(-RobotConstants.autonSpeed);
+    } else if (autonTimer.get() <=10.5 && autonTimer.get() > 10) {
       right1.set(-RobotConstants.autonSpeed);
       left1.set(-RobotConstants.autonSpeed);
-    } else {
-      right1.set(0);
-      left1.set(0);
+    } else if (autonTimer.get() <=11.5 && autonTimer.get() > 10.5) {
+      elevatorL.set(0.5);
+      elevatorR.set(0.5);
+      right1.set(-RobotConstants.autonSpeed);
+      left1.set(-RobotConstants.autonSpeed);
+    } else if (autonTimer.get() <=10.5 && autonTimer.get() > 10) {
+      manLeft.set(-1);
+      manRight.set(-1);
     }
   }
 
@@ -223,21 +280,30 @@ public class Robot extends TimedRobot {
     elevatorR.set(RobotConstants.elevatorOutput); // only time elevator speed actually gets set in the
 
     // MANIPULATOR
+    RobotConstants.manLeftOutput=Math.abs(Manipulator.LinVeltoManRot(Manipulator.drvRotLinVel(drvLEnc.getVelocity()))); //always positive
+    RobotConstants.manRightOutput=Math.abs(Manipulator.LinVeltoManRot(Manipulator.drvRotLinVel(drvREnc.getVelocity()))); //always positive
+    if(RobotConstants.manLeftOutput==0){
+      RobotConstants.manLeftOutput=1;
+    }
+    if(RobotConstants.manRightOutput==0){
+      RobotConstants.manRightOutput=1;
+    }
+
     if (RobotConstants.OpperarightTrigger > 0) { // intake
-      manLong.set(RobotConstants.OpperarightTrigger * RobotConstants.manMaxSPD);
-      manShort.set(RobotConstants.OpperarightTrigger * RobotConstants.manMaxSPD);
+      manLeftPID.setReference(-RobotConstants.manLeftOutput*RobotConstants.manMaxSPD,ControlType.kVelocity);
+      manRightPID.setReference(-RobotConstants.manRightOutput*RobotConstants.manMaxSPD,ControlType.kVelocity);
 
     } else if (RobotConstants.OpperaleftTrigger > 0) { // outtake
-      manLong.set(-RobotConstants.OpperaleftTrigger * (RobotConstants.manMaxSPD * 1.5));
-      manShort.set(-RobotConstants.OpperaleftTrigger * (RobotConstants.manMaxSPD * 1.5));
+      manLeftPID.setReference(RobotConstants.manLeftOutput*RobotConstants.manMaxSPD,ControlType.kVelocity);
+      manRightPID.setReference(RobotConstants.manRightOutput*RobotConstants.manMaxSPD,ControlType.kVelocity);
 
     } else if (RobotConstants.OpperabButton) {
-      manLong.set(RobotConstants.manMaxSPD / 2);
-      manShort.set(-RobotConstants.manMaxSPD / 2);
+      manLeftPID.setReference(-(RobotConstants.manLeftOutput/2)*RobotConstants.manMaxSPD,ControlType.kVelocity);
+      manRightPID.setReference(-(RobotConstants.manRightOutput/2)*RobotConstants.manMaxSPD,ControlType.kVelocity);
 
     } else { // manual control
-      manLong.set(Math.abs(RobotConstants.OpperaleftStick) * RobotConstants.OpperaleftStick);
-      manShort.set(Math.abs(RobotConstants.OpperarightStick) * RobotConstants.OpperarightStick);
+      manLeft.set(Math.abs(RobotConstants.OpperaleftStick) * RobotConstants.OpperaleftStick);
+      manRight.set(Math.abs(RobotConstants.OpperarightStick) * RobotConstants.OpperarightStick);
 
     }
 
@@ -255,34 +321,42 @@ public class Robot extends TimedRobot {
 
     if (RobotConstants.slowMode) { // slowmode max speed
       RobotConstants.robotAccMaxSpeed = RobotConstants.slowModeMaxSpeed;
+    } else if (RobotConstants.turboMode) {
+      RobotConstants.robotAccMaxSpeed = 1;
     } else {
       RobotConstants.robotAccMaxSpeed = RobotConstants.robotMaxSpeed;
     }
 
-    if (RobotConstants.topEndstop || (RobotConstants.stg2Top == false)) { // go to slow mode if elevator at top or stage
-                                                                          // 2 at top
+    if (RobotConstants.topEndstop || (RobotConstants.stg2Top == false)) { // slow mode if elevator or stage 2 at top
       RobotConstants.turboMode = false;
       RobotConstants.slowMode = true;
     }
 
-    if (RobotConstants.DrivleftStick > 0 && RobotConstants.DrivrightStick > 0) { // if backwards then make slow mode
-                                                                                 // even slower and turn off turbo mode
+    if (RobotConstants.DrivleftStick > 0 && RobotConstants.DrivrightStick > 0) { // if backwards make slow mode slower
       RobotConstants.turboMode = false;
       RobotConstants.slowModeMaxSpeed = 0.1;
     } else {
       RobotConstants.slowModeMaxSpeed = 0.125;
     }
 
-    if (RobotConstants.turboMode==false) {
-      left1.set(
-          (Math.abs(RobotConstants.DrivleftStick) * RobotConstants.DrivleftStick) * RobotConstants.robotAccMaxSpeed);
-      right1.set(
-          (Math.abs(RobotConstants.DrivrightStick) * RobotConstants.DrivrightStick) * RobotConstants.robotAccMaxSpeed);
+    if (RobotConstants.DrivleftTrigger > 0) {
+      RobotConstants.leftOutput = RobotConstants.DrivleftTrigger;
+      RobotConstants.rightOutput = RobotConstants.DrivleftTrigger;
+      System.out.println("going from left trigger");
+
+    } else if (RobotConstants.DrivrightTrigger > 0) {
+      RobotConstants.leftOutput = -RobotConstants.DrivrightTrigger;
+      RobotConstants.rightOutput = -RobotConstants.DrivrightTrigger;
+      System.out.println("going from right trigger");
 
     } else {
-      left1.set(RobotConstants.DrivleftStick);
-      right1.set(RobotConstants.DrivrightStick);
+      RobotConstants.leftOutput = Math.abs(RobotConstants.DrivleftStick) * RobotConstants.DrivleftStick;
+      RobotConstants.rightOutput = Math.abs(RobotConstants.DrivrightStick) * RobotConstants.DrivrightStick;
+      System.out.println("going from normal controls");
     }
+
+    left1.set(RobotConstants.leftOutput * RobotConstants.robotAccMaxSpeed);
+    right1.set(RobotConstants.rightOutput * RobotConstants.robotAccMaxSpeed);
   }
   /** This function is called once each time the robot enters test mode. */
   @Override

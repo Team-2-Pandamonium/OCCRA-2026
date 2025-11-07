@@ -26,7 +26,6 @@ public class RobotConstants {
     public static final double elevatorMaxRot = 76.25; //EXPERIMENTALLY DETERMINED
     public static final double elevatorMaxSpeed = 0.75;
     public static double elevatorRotHeight; //height in rotations
-    // the values for heights are measured in rotations and are EXPERIMENTALLY DETERMINED
     public static final double Level1 = 24 + 6;
     public static final double Level2 = 24 + 17 + 6;
     public static final double Level3 = 24 + (17 * 2) + 6;
@@ -39,6 +38,12 @@ public class RobotConstants {
     public static boolean bottEndstop;
     // manipulator
     public static final double manMaxSPD=0.1;
+    public static double manLeftOutput;
+    public static double manRightOutput;
+
+    // drive
+    public static double rightOutput;
+    public static double leftOutput;
 
     // inputs, driver
     public static double DrivrightTrigger;

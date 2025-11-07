@@ -23,25 +23,22 @@ public class UpdatePeriodic {
             RobotConstants.DrivrightStick = 0;
         }
 
-        if (frc.robot.Robot.DRIV_CONTROLLER.getLeftTriggerAxis() >= RobotConstants.Drivdeadzone) {
-            RobotConstants.DrivleftTrigger = frc.robot.Robot.DRIV_CONTROLLER.getLeftTriggerAxis();
+        if (frc.robot.Robot.DRIV_CONTROLLER.getRawAxis(3) >= RobotConstants.Drivdeadzone) {
+            RobotConstants.DrivleftTrigger = frc.robot.Robot.DRIV_CONTROLLER.getRawAxis(3);
         } else {
             RobotConstants.DrivleftTrigger = 0;
         }
 
-        if (frc.robot.Robot.DRIV_CONTROLLER.getRightTriggerAxis() >= RobotConstants.Drivdeadzone) {
-            RobotConstants.DrivrightTrigger = frc.robot.Robot.DRIV_CONTROLLER.getRightTriggerAxis();
+        if (frc.robot.Robot.DRIV_CONTROLLER.getRawAxis(4) >= RobotConstants.Drivdeadzone) {
+            RobotConstants.DrivrightTrigger = frc.robot.Robot.DRIV_CONTROLLER.getRawAxis(4);
         } else {
             RobotConstants.DrivrightTrigger = 0;
         }
 
         // booleans, so no deadzone needed, driver
-        RobotConstants.DrivleftBumper = frc.robot.Robot.DRIV_CONTROLLER.getLeftBumper();
-        RobotConstants.DrivrightBumper = frc.robot.Robot.DRIV_CONTROLLER.getRightBumper();
-        RobotConstants.DrivbButton = frc.robot.Robot.DRIV_CONTROLLER.getBButton();
-        RobotConstants.DrivxButton = frc.robot.Robot.DRIV_CONTROLLER.getXButton();
-        RobotConstants.DrivaButton = frc.robot.Robot.DRIV_CONTROLLER.getAButton();
-        RobotConstants.DrivyButton = frc.robot.Robot.DRIV_CONTROLLER.getYButton();
+        RobotConstants.DrivleftBumper = frc.robot.Robot.DRIV_CONTROLLER.getRawButton(5);
+        RobotConstants.DrivrightBumper = frc.robot.Robot.DRIV_CONTROLLER.getRawButton(6);
+
         // Opperator
         if (Math.abs(frc.robot.Robot.OPPERA_CONTROLLER.getLeftY()) >= RobotConstants.Oppdeadzone) {
             RobotConstants.OpperaleftStick = frc.robot.Robot.OPPERA_CONTROLLER.getLeftY();

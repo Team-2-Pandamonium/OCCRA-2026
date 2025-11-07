@@ -12,10 +12,6 @@ public class Elevator {
    * @apiNote 1 = 1st shelf
    * @apiNote 2 = 2nd shelf
    * @apiNote 3 = 3rd shelf
-   * @apiNote 4 = 1st shelf indexing
-   * @apiNote 5 = 2nd shelf indexing
-   * @apiNote 6 = 3rd shelf indexing
-   * @apiNote 7 = HP station
    * @param level
    * @param currHeight (in rotations)
    * @return <b>movDist<b> (in rotations)
