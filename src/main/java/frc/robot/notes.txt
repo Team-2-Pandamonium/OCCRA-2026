@@ -27,19 +27,20 @@ elastic documentation
     - drivemode
 elevator trajectory planning instead of pid (LOW PRIORITY)
 manipulator
-    - Encoder value either drivebase motors,
-    - both sides indivitually,
-    - encoder value of intake,
-    - using angular velocity, calc speed of robot on drivebase 
-    - take speed and rpm of the intake, either raise or lower it using tangential speed, wheels going in would match speed of going forward
-    - max speed correlated with speed of drivebase
-    - if not moving, sets max speed of intake to a minumum value
+    - The indented below may not be needed anymore, but needs to be checked by daniel or someone
+        - Encoder value either drivebase motors,
+        - both sides indivitually,
+        - encoder value of intake,
+        - using angular velocity, calc speed of robot on drivebase 
+        - take speed and rpm of the intake, either raise or lower it using tangential speed, wheels going in would match speed of going forward
+        - max speed correlated with speed of drivebase
+        - if not moving, sets max speed of intake to a minumum value
     
-    - take value of encoder vel value from drivebase each side, 1 motor
-        - will get vel of motor, not vel of robot
-    - make sure intake can't go below 10% (0.1)
+        - take value of encoder vel value from drivebase each side, 1 motor
+            - will get vel of motor, not vel of robot
+        - make sure intake can't go below 10% (0.1)
 
-auton
-    -place cube on shelf
+auton:
+    moar cubes on shelf + testing on the actual robot
 
 Code is like people (used to be women but thats sexist), make it happy and it won't yell at you in red lines
