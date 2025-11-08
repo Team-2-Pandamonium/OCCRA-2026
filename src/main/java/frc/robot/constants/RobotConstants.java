@@ -44,6 +44,7 @@ public class RobotConstants {
     // drive
     public static double rightOutput;
     public static double leftOutput;
+    public static double robotAngle;
 
     // inputs, driver
     public static double DrivrightTrigger;

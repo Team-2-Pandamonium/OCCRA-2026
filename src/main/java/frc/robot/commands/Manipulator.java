@@ -17,10 +17,6 @@ public class Manipulator {
      * @param linVel
      * @return <b>drvRot<b>
      */
-    public static double linVelToDrvRotInSecs(double linVel, double secs){
-        double wheelRot=linVel*8.46;
-        return (wheelRot/(Math.PI*6))/secs;
-    }
 
     /**
      * 
