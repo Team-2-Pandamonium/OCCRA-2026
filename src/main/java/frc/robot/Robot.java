@@ -183,6 +183,13 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     UpdatePeriodic.updateSensorValues();
+    elevatorSetP.setDouble(0.001);
+    elevatorSetI.setDouble(0);
+    elevatorSetD.setDouble(0);
+    elevatorPosition.getEntry();
+    roll.getEntry();
+    yaw.getEntry();
+    pitch.getEntry();
     if (autonConst.strt) {
       // move 1 ft (12 in)
       autonConst.movdStrt = Auton.goFwd(Auton.distToRot(12));
@@ -212,8 +219,7 @@ public class Robot extends TimedRobot {
       if (autonConst.movToshelf) {
         autonConst.trnd = false;
         elevatorR.set(RobotConstants.elevatorOutput);
-      RobotConstants.elevatorOutput = (Elevator.CalcDist(1, RobotConstants.elevatorRotHeight)
-          / (RobotConstants.elevatorMaxRot));
+      RobotConstants.elevatorOutput = (Elevator.CalcDist(1, RobotConstants.elevatorRotHeight));
       if (Math.abs(RobotConstants.elevatorOutput) > RobotConstants.elevatorMaxSpeed) {
         if (RobotConstants.elevatorOutput > 0) {
           RobotConstants.elevatorOutput = RobotConstants.elevatorMaxSpeed;
@@ -300,6 +306,13 @@ public class Robot extends TimedRobot {
     UpdatePeriodic.updateControllerInputs();
     UpdatePeriodic.updateSensorValues();
     // newTabKevin.add("Elevator Height ", RobotConstants.elevatorHeight);
+    elevatorSetP.setDouble(0.001);
+    elevatorSetI.setDouble(0);
+    elevatorSetD.setDouble(0);
+    elevatorPosition.getEntry();
+    roll.getEntry();
+    yaw.getEntry();
+    pitch.getEntry();
 
     // ELEVATOR
     if (RobotConstants.bottEndstop == true) {
@@ -311,18 +324,15 @@ public class Robot extends TimedRobot {
 
     // ANY Elevator movment
     if (RobotConstants.OpperaaButton) { // lvl1
-      RobotConstants.elevatorOutput = (Elevator.CalcDist(1, RobotConstants.elevatorRotHeight)
-          / (RobotConstants.elevatorMaxRot));
+      RobotConstants.elevatorOutput = (Elevator.CalcDist(1, RobotConstants.elevatorRotHeight));
           RobotConstants.PIDMode = true;
 
     } else if (RobotConstants.OpperayButton) { // lvl3
-      RobotConstants.elevatorOutput = (Elevator.CalcDist(3, RobotConstants.elevatorRotHeight)
-          / (RobotConstants.elevatorMaxRot));
+      RobotConstants.elevatorOutput = (Elevator.CalcDist(3, RobotConstants.elevatorRotHeight));
           RobotConstants.PIDMode = true;
 
     } else if (RobotConstants.OpperaxButton) { // lvl2
-      RobotConstants.elevatorOutput = (Elevator.CalcDist(2, RobotConstants.elevatorRotHeight)
-          / (RobotConstants.elevatorMaxRot));
+      RobotConstants.elevatorOutput = (Elevator.CalcDist(2, RobotConstants.elevatorRotHeight));
           RobotConstants.PIDMode = true;
 
     } else if (RobotConstants.OpperaDPadUp) { // DPAD movment (manual)
@@ -330,7 +340,7 @@ public class Robot extends TimedRobot {
       if (RobotConstants.elevatorRotHeight > RobotConstants.maxHgtSlowThrthHld) {
         RobotConstants.elevatorOutput = (0.1);
       } else {
-        RobotConstants.elevatorOutput = (0.3);
+        RobotConstants.elevatorOutput = (0.8);
       }
       RobotConstants.PIDMode = false;
 
@@ -340,12 +350,12 @@ public class Robot extends TimedRobot {
         RobotConstants.elevatorOutput = 0.05;
 
       } else {
-        RobotConstants.elevatorOutput = 0.1;
+        RobotConstants.elevatorOutput = 0.2;
       }
       RobotConstants.PIDMode = false;
 
     } else if (RobotConstants.OpperaDPadDown) {
-      RobotConstants.elevatorOutput = -0.3;
+      RobotConstants.elevatorOutput = -0.5;
       RobotConstants.PIDMode = false;
 
 
