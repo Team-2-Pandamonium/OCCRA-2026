@@ -192,7 +192,7 @@ public class Robot extends TimedRobot {
     pitch.getEntry();
     if (autonConst.strt) {
       // move 1 ft (12 in)
-      autonConst.movdStrt = Auton.goFwd(Auton.distToRot(12));
+      autonConst.movdStrt = Auton.goFwd(Auton.distToRot(156));
     }
 
 
@@ -212,7 +212,7 @@ public class Robot extends TimedRobot {
 
     // go 12 in (1 ft) forwards
     if (autonConst.trnd) {
-      autonConst.movToshelf = Auton.goFwd(Auton.distToRot(12));
+      autonConst.movToshelf = Auton.goFwd(Auton.distToRot(96));
     }
 
       // go to level 1 on elevator
@@ -235,7 +235,7 @@ public class Robot extends TimedRobot {
       // if the elevator is at level 1, then go forward 3 inches, into the shelf
       if (Math.abs(Elevator.CalcDist(1, RobotConstants.elevatorRotHeight) - elevatorEnc.getPosition()) <= 0.5) {
         autonConst.movToshelf = false;
-        autonConst.push = Auton.goFwd(Auton.distToRot(3));
+        autonConst.push = Auton.goFwd(Auton.distToRot(6));
       }
 
       if (autonConst.push) {
@@ -254,7 +254,7 @@ public class Robot extends TimedRobot {
       if (autonConst.outTaked) {
         //move backwards 6 inches (0.5 ft)
         autonConst.outTaked = false;
-        autonConst.backedUp = Auton.goFwd(Auton.distToRot(-6));
+        autonConst.backedUp = Auton.goFwd(Auton.distToRot(-12));
       }
       if (autonConst.backedUp) {
         // elevator bottom
