@@ -77,14 +77,14 @@ public class Robot extends TimedRobot {
   public static final Timer autonTimer = new Timer();
 
   //Shuffleboard
-  private ShuffleboardTab tab = Shuffleboard.getTab("Main");
-  public GenericEntry elevatorSetP = tab.addPersistent("ElevatorP",.001).getEntry();
-  public GenericEntry elevatorSetI = tab.addPersistent("ElevatorI",0).getEntry();
-  public GenericEntry elevatorSetD = tab.addPersistent("ElevatorD",.001).getEntry();
-  public SimpleWidget elevatorPosition = tab.add("Elevator Position", elevatorR.getEncoder());
-  public SimpleWidget roll = tab.add("Roll Angle", gyro.getRoll());
-  public SimpleWidget pitch = tab.add("Pitch Angle", gyro.getPitch());
-  public SimpleWidget yaw = tab.add("Yaw Angle", gyro.getYaw());
+  // private ShuffleboardTab tab = Shuffleboard.getTab("Main");
+  // public GenericEntry elevatorSetP = tab.addPersistent("ElevatorP",.001).getEntry();
+  // public GenericEntry elevatorSetI = tab.addPersistent("ElevatorI",0).getEntry();
+  // public GenericEntry elevatorSetD = tab.addPersistent("ElevatorD",.001).getEntry();
+  // public SimpleWidget elevatorPosition = tab.add("Elevator Position", elevatorR.getEncoder());
+  // public SimpleWidget roll = tab.add("Roll Angle", gyro.getRoll());
+  // public SimpleWidget pitch = tab.add("Pitch Angle", gyro.getPitch());
+  // public SimpleWidget yaw = tab.add("Yaw Angle", gyro.getYaw());
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -330,7 +330,7 @@ public class Robot extends TimedRobot {
       if (RobotConstants.elevatorRotHeight > RobotConstants.maxHgtSlowThrthHld) {
         RobotConstants.elevatorOutput = (0.1);
       } else {
-        RobotConstants.elevatorOutput = (0.3);
+        RobotConstants.elevatorOutput = (.8);
       }
       RobotConstants.PIDMode = false;
 
@@ -340,12 +340,12 @@ public class Robot extends TimedRobot {
         RobotConstants.elevatorOutput = 0.05;
 
       } else {
-        RobotConstants.elevatorOutput = 0.1;
+        RobotConstants.elevatorOutput = 0.2;
       }
       RobotConstants.PIDMode = false;
 
     } else if (RobotConstants.OpperaDPadDown) {
-      RobotConstants.elevatorOutput = -0.3;
+      RobotConstants.elevatorOutput = -0.5;
       RobotConstants.PIDMode = false;
 
 
@@ -358,16 +358,6 @@ public class Robot extends TimedRobot {
       RobotConstants.PIDMode = false;
     }
 
-    // not allowed to go over max speed
-    if (Math.abs(RobotConstants.elevatorOutput) > RobotConstants.elevatorMaxSpeed) {
-      if (RobotConstants.elevatorOutput < 0) {
-        RobotConstants.elevatorOutput = -RobotConstants.elevatorMaxSpeed;
-      } else if (RobotConstants.elevatorOutput > 0) {
-        RobotConstants.elevatorOutput = RobotConstants.elevatorMaxSpeed;
-      } else {
-        System.err.println("ERROR: elevator max speed is 0");
-      }
-    }
 
     // digital stops
     if ((RobotConstants.OpperaDPadUp || RobotConstants.OpperaDPadUpRight) && RobotConstants.topEndstop == true) {
@@ -419,24 +409,24 @@ public class Robot extends TimedRobot {
     if (RobotConstants.OpperarightTrigger > 0) { // intake
       // manLeftPID.setReference(-RobotConstants.manLeftOutput*RobotConstants.manMaxSPD,ControlType.kVelocity);
       // manRightPID.setReference(-RobotConstants.manRightOutput*RobotConstants.manMaxSPD,ControlType.kVelocity);
-      manLeft.set(RobotConstants.OpperarightTrigger*RobotConstants.manMaxSPD);
+      manLeft.set(RobotConstants.OpperarightTrigger*RobotConstants.manMaxSPD*3);
       manRight.set(RobotConstants.OpperarightTrigger*RobotConstants.manMaxSPD);
 
     } else if (RobotConstants.OpperaleftTrigger > 0) { // outtake
       // manLeftPID.setReference(RobotConstants.manLeftOutput*RobotConstants.manMaxSPD,ControlType.kVelocity);
       // manRightPID.setReference(RobotConstants.manRightOutput*RobotConstants.manMaxSPD,ControlType.kVelocity);
-      manLeft.set(-RobotConstants.OpperaleftTrigger*RobotConstants.manMaxSPD);
+      manLeft.set(-RobotConstants.OpperaleftTrigger*RobotConstants.manMaxSPD*3);
       manRight.set(-RobotConstants.OpperaleftTrigger*RobotConstants.manMaxSPD);
 
     } else if (RobotConstants.OpperabButton) {
       // manLeftPID.setReference(-(RobotConstants.manLeftOutput/2)*RobotConstants.manMaxSPD,ControlType.kVelocity);
       // manRightPID.setReference(-(RobotConstants.manRightOutput/2)*RobotConstants.manMaxSPD,ControlType.kVelocity);
-      manLeft.set(RobotConstants.manMaxSPD/2);
+      manLeft.set(RobotConstants.manMaxSPD);
       manRight.set(-RobotConstants.manMaxSPD/2);
 
     } else { // manual control
-      manLeft.set(Math.abs(RobotConstants.OpperaleftStick));
-      manRight.set(Math.abs(RobotConstants.OpperarightStick));
+      manLeft.set(Math.abs(RobotConstants.OpperaleftStick)*RobotConstants.OpperaleftStick);
+      manRight.set(Math.abs(RobotConstants.OpperarightStick)*RobotConstants.OpperarightStick);
 
     }
 
@@ -482,6 +472,9 @@ public class Robot extends TimedRobot {
       RobotConstants.rightOutput = -RobotConstants.DrivrightTrigger;
       //System.out.println("going from right trigger");
 
+    } else if ((RobotConstants.DrivrightStick > .75 && RobotConstants.DrivleftStick < -.75) || (RobotConstants.DrivrightStick < -.75 && RobotConstants.DrivleftStick > .75)) {
+    RobotConstants.rightOutput = RobotConstants.DrivrightStick * 2;
+    RobotConstants.leftOutput = RobotConstants.DrivleftStick * 2;
     } else {
       RobotConstants.leftOutput = Math.abs(RobotConstants.DrivleftStick) * RobotConstants.DrivleftStick;
       RobotConstants.rightOutput = Math.abs(RobotConstants.DrivrightStick) * RobotConstants.DrivrightStick;

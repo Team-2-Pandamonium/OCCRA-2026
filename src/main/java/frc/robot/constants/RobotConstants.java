@@ -24,12 +24,12 @@ public class RobotConstants {
     public static final double kPoffset = 25;
     public static final double elevatorMaxHeight = 60;
     public static final double elevatorMaxRot = 76.25; //EXPERIMENTALLY DETERMINED
-    public static final double elevatorMaxSpeed = 0.75;
+    public static final double elevatorMaxSpeed = 1;
     public static double elevatorRotHeight; //height in rotations
     public static final double Level1 = 24 + 6;
     public static final double Level2 = 24 + 17 + 6;
     public static final double Level3 = 24 + (17 * 2) + 6;
-    public static final double maxHgtSlowThrthHld=72;
+    public static final double maxHgtSlowThrthHld=68;
     public static boolean carrigeTop;
     public static boolean stg2Top;
     public static boolean carrigeBot;
