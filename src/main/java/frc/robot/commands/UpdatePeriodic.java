@@ -128,6 +128,7 @@ public class UpdatePeriodic {
         RobotConstants.carrigeBot=frc.robot.Robot.CarrigeBottom.get();
         RobotConstants.carrigeTop=frc.robot.Robot.CarrigeTop.get();
         RobotConstants.stg2Top=frc.robot.Robot.stg2Top.get();
+        RobotConstants.robotAngle=Robot.gyro.getAngle();
         // RobotConstants.elevatorHeight = Elevator.RottoIn(RobotConstants.elevatorRotHeight);
 
         if (RobotConstants.carrigeBot == false) {
