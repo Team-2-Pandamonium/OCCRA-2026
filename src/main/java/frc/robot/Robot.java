@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.SPI.Port;
 
@@ -49,6 +50,11 @@ public class Robot extends TimedRobot {
   //PID encoders
   public static final RelativeEncoder drvLEnc = left1.getEncoder();
   public static final RelativeEncoder drvREnc = right1.getEncoder();
+
+
+  //PID
+  public static final SparkClosedLoopController elevatorRPID=manRight.getClosedLoopController(); //left follows
+
 
   //sensors
   public static final RelativeEncoder elevatorEnc = elevatorR.getEncoder();
@@ -72,7 +78,14 @@ public class Robot extends TimedRobot {
 
   //Shuffleboard
   private ShuffleboardTab tab = Shuffleboard.getTab("Main");
-  public GenericEntry elevatorRP = tab.add("ElevatorP",1).getEntry();
+  public GenericEntry elevatorSetP = tab.addPersistent("ElevatorP",.01).getEntry();
+  public GenericEntry elevatorSetI = tab.addPersistent("ElevatorI",0).getEntry();
+  public GenericEntry elevatorSetD = tab.addPersistent("ElevatorD",.001).getEntry();
+  public SimpleWidget elevatorPosition = tab.add("Elevator Position", elevatorR.getEncoder());
+  public SimpleWidget roll = tab.add("Roll Angle", gyro.getRoll());
+  public SimpleWidget pitch = tab.add("Pitch Angle", gyro.getPitch());
+  public SimpleWidget yaw = tab.add("Yaw Angle", gyro.getYaw());
+
   /**
    * This function is run when the robot is first started up and should be used
    * for any
@@ -96,21 +109,23 @@ public class Robot extends TimedRobot {
     left1.configure(configL1, null, null);
     left2.configure(configL2, null, null);
 
+    //ELEVATOR
     SparkMaxConfig configEleR = new SparkMaxConfig();
     configEleR.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(false).closedLoop
-    .pid(PIDVar.elevatorRP,
-        PIDVar.elevatorRI,
-        PIDVar.elevatorRD,
+    .pid(PIDVar.elevatorP,
+        PIDVar.elevatorI,
+        PIDVar.elevatorD,
         ClosedLoopSlot.kSlot0);
     SparkMaxConfig configEleL = new SparkMaxConfig();
     configEleL.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(false).follow(elevatorR, true).closedLoop
-    .pid(PIDVar.elevatorLP,
-        PIDVar.elevatorLI,
-        PIDVar.elevatorLD,
+    .pid(PIDVar.elevatorP,
+        PIDVar.elevatorI,
+        PIDVar.elevatorD,
         ClosedLoopSlot.kSlot0);
     elevatorR.configure(configEleR, null, null);
     elevatorL.configure(configEleL, null, null);
 
+    //MANIPULATOR
     SparkMaxConfig configManRight = new SparkMaxConfig();
     configManRight.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(true);
 
@@ -359,18 +374,24 @@ public class Robot extends TimedRobot {
     if ((RobotConstants.OpperaDPadUp || RobotConstants.OpperaDPadUpRight) && RobotConstants.topEndstop == true) {
       RobotConstants.elevatorOutput = 0;
       System.err.println("ERROR: TRYING TO OVER EXTEND ELEVATOR, setting elevator speed to 0");
+      RobotConstants.PIDMode = false;
+
 
     } else if ((RobotConstants.OpperaDPadDown || RobotConstants.OpperaDPadDownRight)
         && RobotConstants.bottEndstop == true) {
       RobotConstants.elevatorOutput = 0;
       System.err.println("ERROR: TRYING TO UNDER EXTEND ELEVATOR, setting elevator speed to 0");
+      RobotConstants.PIDMode = false;
+
     }
 
     if ((RobotConstants.PIDMode)){
-      elevatorR.setReference(RobotConstants.elevatorOutput, ControlType.kPosition, feedfoward);
-    }
+      elevatorRPID.setReference(RobotConstants.elevatorOutput, ControlType.kVelocity);
+    } else{
     elevatorR.set(RobotConstants.elevatorOutput); // one of the only times the elevator speed actually gets set in the
                                                   // code
+    }
+    System.err.println(elevatorR.getEncoder());
 
     // MANIPULATOR
     
@@ -455,21 +476,35 @@ public class Robot extends TimedRobot {
     if (RobotConstants.DrivleftTrigger > 0) {
       RobotConstants.leftOutput = RobotConstants.DrivleftTrigger;
       RobotConstants.rightOutput = RobotConstants.DrivleftTrigger;
-      System.out.println("going from left trigger");
+      //System.out.println("going from left trigger");
 
     } else if (RobotConstants.DrivrightTrigger > 0) {
       RobotConstants.leftOutput = -RobotConstants.DrivrightTrigger;
       RobotConstants.rightOutput = -RobotConstants.DrivrightTrigger;
-      System.out.println("going from right trigger");
+      //System.out.println("going from right trigger");
 
     } else {
       RobotConstants.leftOutput = Math.abs(RobotConstants.DrivleftStick) * RobotConstants.DrivleftStick;
       RobotConstants.rightOutput = Math.abs(RobotConstants.DrivrightStick) * RobotConstants.DrivrightStick;
-      System.out.println("going from normal controls");
+      //System.out.println("going from normal controls");
     }
+    //ANTI-TIP
+    // if (gyro.getPitch() > 25) {
+    //   left1.set(.75);
+    //   right1.set(.75);
+    //   System.err.println("ANTI-TIP ACTIVATED");
+    // } else if (gyro.getPitch() < -25) {
+    //   left1.set(.5);
+    //   right1.set(.5);
+    //   System.err.println("ANTI-TIP ACTIVATED");
+
+    // }
+
 
     left1.set(RobotConstants.leftOutput * RobotConstants.robotAccMaxSpeed);
     right1.set(RobotConstants.rightOutput * RobotConstants.robotAccMaxSpeed);
+
+
   }
   /** This function is called once each time the robot enters test mode. */
   @Override
