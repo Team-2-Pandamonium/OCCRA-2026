@@ -34,7 +34,7 @@ import static edu.wpi.first.units.Units.Volts;
 public class Elevator extends SubsystemBase{
 
   public static final PIDController pidController = new PIDController(0, 0, 0);
-  public static final SimpleMotorFeedforward ffController = new SimpleMotorFeedforward(0, 0);
+  public static final SimpleMotorFeedforward ffController = new SimpleMotorFeedforward(1, 1);
   //Value holders, so the code doesn't cream in red lines
   private static final MutAngularVelocity m_velocity = RadiansPerSecond.mutable(0);
   private static final MutAngle m_angle = Radians.mutable(0);
@@ -195,9 +195,9 @@ public class Elevator extends SubsystemBase{
   public Command elevatorSetFancy(int level) {
     // Run shooter wheel at the desired speed using a PID controller and feedforward.
     return run(() -> {
-      double shooterSpeed = InToRot(CalcDist(level, RobotConstants.elevatorRotHeight))/0.75;
+      double shooterSpeed = InToRot(CalcDist(level, RobotConstants.elevatorRotHeight));
           Robot.elevatorR.setVoltage(
-              m_shooterFeedback.calculate(Robot.elevatorEnc.getVelocity(), shooterSpeed)
+              m_shooterFeedback.calculate(Robot.elevatorEnc.getPosition(), shooterSpeed)
                   + m_shooterFeedforward.calculate(shooterSpeed));
         })
         .finallyDo(
