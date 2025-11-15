@@ -1,6 +1,8 @@
 package frc.robot.commands;
 
-public class Manipulator {
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class Manipulator extends SubsystemBase {
 
     /**
      * 
