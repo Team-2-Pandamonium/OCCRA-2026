@@ -97,8 +97,8 @@ public class Robot extends TimedRobot {
   // camera
   public static final UsbCamera camera = CameraServer.startAutomaticCapture();
   // controllers
-  public static final PS5Controller DRIV_CONTROLLER = new PS5Controller(0);
-  public static final XboxController OPPERA_CONTROLLER = new XboxController(1);
+  public static final CommandPS5Controller DRIV_CONTROLLER = new CommandPS5Controller(0);
+  public static final CommandXboxController OPPERA_CONTROLLER = new CommandXboxController(1);
 
   // Timers :(
   public static final Timer drivModeTimer=new Timer();
@@ -340,7 +340,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during teleoperated mode. */
   @Override
   public void teleopPeriodic() {
-    UpdatePeriodic.updateControllerInputs();
+    // UpdatePeriodic.updateControllerInputs();
     UpdatePeriodic.updateSensorValues();
     // newTabKevin.add("Elevator Height ", RobotConstants.elevatorHeight);
 
@@ -403,7 +403,6 @@ public class Robot extends TimedRobot {
       RobotConstants.elevatorOutput = 0.03;
       RobotConstants.PIDMode = false;
     }
-
 
     // digital stops
     if ((RobotConstants.OpperaDPadUp || RobotConstants.OpperaDPadUpRight) && RobotConstants.topEndstop == true) {
@@ -475,7 +474,7 @@ public class Robot extends TimedRobot {
       manRight.set(Math.abs(RobotConstants.OpperarightStick)*RobotConstants.OpperarightStick);
 
     }
-
+  
     // DRIVE
     if (drivModeTimer.get() >= 0.1) { // toggle drive mode
     RobotConstants.slowMode ^= RobotConstants.DrivleftBumper;
