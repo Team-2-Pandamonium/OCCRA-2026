@@ -45,6 +45,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import edu.wpi.first.wpilibj.SPI.Port;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 import static edu.wpi.first.units.Units.Radians;
@@ -90,6 +91,7 @@ public class Robot extends TimedRobot {
   public static final DigitalInput stg2Top = new DigitalInput(0);
   public static final DigitalInput CarrigeTop = new DigitalInput(1);
   public static final DigitalInput CarrigeBottom = new DigitalInput(2);
+  public final BooleanSupplier CarriageBottom2 = () -> CarrigeBottom.get();
 
   // gyroscope
   public static final AHRS gyro = new AHRS(SPI.Port.kMXP);
@@ -295,7 +297,7 @@ public class Robot extends TimedRobot {
       }
       if (autonConst.backedUp) {
         // elevator bottom
-        Elevator.reset0(true);
+        new Elevator().reset0(true);
       }
 
       if (elevatorEnc.getPosition() == 0 && autonConst.backedUp) {

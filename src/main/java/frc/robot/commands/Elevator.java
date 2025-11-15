@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.Robot;
 import frc.robot.constants.RobotConstants;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 
@@ -103,16 +104,22 @@ public class Elevator extends SubsystemBase{
   *
   * @param powered (use the motors to go to the 0 point or not)
   */
-  public static void reset0(boolean powered) {
-  if (powered) {
-  while (Robot.CarrigeBottom.get()) {
-  Robot.elevatorR.set(-0.3);
-  }
-  Robot.elevatorR.set(0);
-  }
-  if (!RobotConstants.bottEndstop) {
-    Robot.elevatorEnc.setPosition(0);
-  }  
+  public Command reset0(boolean powered) {
+    BooleanSupplier CarriageBottom = () -> Robot.CarrigeBottom.get();
+    return this.run(() -> {Robot.elevatorR.set(-0.3);})
+    .onlyWhile(CarriageBottom)
+    .finallyDo(() -> {Robot.elevatorR.set(0);
+      Robot.elevatorEnc.setPosition(0);});
+  // if (powered) {
+  // while (Robot.CarrigeBottom.get()) {
+  // Robot.elevatorR.set(-0.3);
+  // }
+  // Robot.elevatorR.set(0);
+  // }
+  // if (!RobotConstants.bottEndstop) {
+  //   Robot.elevatorEnc.setPosition(0);
+  // }  
+  // }
   }
 /**
  * Returns voltage from PID and FF calculations.
@@ -124,19 +131,6 @@ public class Elevator extends SubsystemBase{
     return pidController.calculate(curVelocity, tarVelocity) + ffController.calculate(tarVelocity);
   }
 
-  public static double getCalcPos(double curPos, double tarPos){
-    double maxPosRate = 5;
-    double posError = tarPos - curPos;
-
-    double targetSpeed = maxPosRate * (posError > 0 ? 1 : -1);
-
-    double rampDownSpeed = posError/(2 * maxPosRate);
-
-    if (Math.abs(rampDownSpeed) < Math.abs(targetSpeed)) targetSpeed = rampDownSpeed;
-    
-    return targetSpeed;
-  
-  }
 
   private final SysIdRoutine m_sysIdRoutine =
       new SysIdRoutine(
