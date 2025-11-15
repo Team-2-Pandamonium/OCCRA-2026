@@ -37,6 +37,7 @@ import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -230,43 +231,34 @@ public class Robot extends TimedRobot {
     UpdatePeriodic.updateSensorValues();
     if (autonConst.strt) {
       // move 1 ft (12 in)
-      autonConst.movdStrt = Auton.goFwd(Auton.distToRot(12));
+      new Auton().intake().schedule();;
+      new Auton().goFwd(Auton.distToRot(156)).schedule();;
+      new WaitCommand(4).schedule();;
+      autonConst.movdStrt = true;
     }
 
 
     if (autonConst.movdStrt) {
       autonConst.strt = false;
       // turn to the shelf, 90 degrees
-      if (gyro.getAngle() < 90) { // left auton
-        right1.set(-RobotConstants.autonSpeed);
-        left1.set(RobotConstants.autonSpeed);
-      } else {
-        right1.set(0);
-        left1.set(0);
-        autonConst.trnd = true;
-        autonConst.movdStrt = false;
-      }
+      new Auton().turnLR("L").schedule();;
+      new WaitCommand(3).schedule();;
+      autonConst.trnd = true;
+      autonConst.movdStrt = false;
     }
 
     // go 12 in (1 ft) forwards
     if (autonConst.trnd) {
-      autonConst.movToshelf = Auton.goFwd(Auton.distToRot(12));
+      new Auton().goFwd(Auton.distToRot(84)).schedule();;
+      new WaitCommand(4).schedule();;
+      autonConst.movToshelf = true;
     }
 
       // go to level 1 on elevator
       if (autonConst.movToshelf) {
         autonConst.trnd = false;
-        elevatorR.set(RobotConstants.elevatorOutput);
-      RobotConstants.elevatorOutput = (Elevator.CalcDist(1, RobotConstants.elevatorRotHeight)
-          / (RobotConstants.elevatorMaxRot));
-      if (Math.abs(RobotConstants.elevatorOutput) > RobotConstants.elevatorMaxSpeed) {
-        if (RobotConstants.elevatorOutput > 0) {
-          RobotConstants.elevatorOutput = RobotConstants.elevatorMaxSpeed;
-        } else {
-          RobotConstants.elevatorOutput = -RobotConstants.elevatorMaxSpeed;
-        }
-      }
-
+        new Auton().goToSpecificElevatorLevel(1).schedule();;
+        new WaitCommand(2).schedule();;
       }
 
       // elevatorR.set(RobotConstants.elevatorOutput);
@@ -274,18 +266,15 @@ public class Robot extends TimedRobot {
       // if the elevator is at level 1, then go forward 3 inches, into the shelf
       if (Math.abs(Elevator.CalcDist(1, RobotConstants.elevatorRotHeight) - elevatorEnc.getPosition()) <= 0.5) {
         autonConst.movToshelf = false;
-        autonConst.push = Auton.goFwd(Auton.distToRot(3));
+        autonConst.push = true;
+        new Auton().goFwd(Auton.distToRot(3)).schedule();;
+        new WaitCommand(1).schedule();;
       }
 
       if (autonConst.push) {
         // release the CUBEEE
-        manLeft.set(-RobotConstants.manMaxSPD);
-        manRight.set(-RobotConstants.manMaxSPD);
-        autonTimer.start();
-      }
-
-      if (autonTimer.get() > 0.5) {
-        // wait 0.5 secs to outake fully
+        new Auton().outake().schedule();;
+        new WaitCommand(1).schedule();;
         autonConst.outTaked = true;
         autonConst.push = false;
       }
@@ -293,11 +282,13 @@ public class Robot extends TimedRobot {
       if (autonConst.outTaked) {
         //move backwards 6 inches (0.5 ft)
         autonConst.outTaked = false;
-        autonConst.backedUp = Auton.goFwd(Auton.distToRot(-6));
+        autonConst.backedUp = true;
+        new Auton().goFwd(Auton.distToRot(-6)).schedule();;
+        new WaitCommand(1).schedule();;
       }
       if (autonConst.backedUp) {
         // elevator bottom
-        new Elevator().reset0(true);
+        new Elevator().reset0(true).schedule();;
       }
 
       if (elevatorEnc.getPosition() == 0 && autonConst.backedUp) {

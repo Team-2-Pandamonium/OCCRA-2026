@@ -40,8 +40,8 @@ public class RobotConstants {
     public static int level;
     // manipulator
     public static final double manMaxSPD=0.1;
-    public static double manLeftOutput;
-    public static double manRightOutput;
+    public static double manLeftOutput = 0.5;
+    public static double manRightOutput = 0.25;
 
     // drive
     public static double rightOutput;
