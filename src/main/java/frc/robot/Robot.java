@@ -36,6 +36,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
@@ -55,6 +57,7 @@ import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.hardware.CANrange;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
@@ -78,6 +81,8 @@ public class Robot extends TimedRobot {
 
   //sensors
   public static final RelativeEncoder elevatorEnc = elevatorR.getEncoder();
+  public static final CANrange backCanRange = new CANrange(0);
+  public static final CANrange sideCanRange = new CANrange(1);
 
   //Feedforward
   public static SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0, 0);
@@ -107,6 +112,9 @@ public class Robot extends TimedRobot {
   public static final Timer drivModeTimer=new Timer();
   public static final Timer autonTimer = new Timer();
 
+  //Mode
+  public String mode = "";
+
   //Shuffleboard
   // private ShuffleboardTab tab = Shuffleboard.getTab("Main");
   // public GenericEntry elevatorSetP = tab.addPersistent("ElevatorP",.001).getEntry();
@@ -122,8 +130,11 @@ public class Robot extends TimedRobot {
    * for any
    * initialization code.
    */
+
   @Override
   public void robotInit() {
+
+    //CANrange
 
     //SmartDashboard
     SmartDashboard.updateValues();
@@ -137,28 +148,28 @@ public class Robot extends TimedRobot {
 
     //SparkMaxConfig
     SparkMaxConfig configR1 = new SparkMaxConfig();
-    configR1.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(false);
+    configR1.idleMode(IdleMode.kCoast).smartCurrentLimit(40).disableFollowerMode().inverted(false);
     SparkMaxConfig configR2 = new SparkMaxConfig();
-    configR2.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(false).follow(right1);
+    configR2.idleMode(IdleMode.kCoast).smartCurrentLimit(40).inverted(false).follow(right1);
     right1.configure(configR1, null, null);
     right2.configure(configR2, null, null);
 
     SparkMaxConfig configL1 = new SparkMaxConfig();
-    configL1.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(true);
+    configL1.idleMode(IdleMode.kCoast).smartCurrentLimit(40).disableFollowerMode().inverted(true);
     SparkMaxConfig configL2 = new SparkMaxConfig();
-    configL2.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(true).follow(left1);
+    configL2.idleMode(IdleMode.kCoast).smartCurrentLimit(40).inverted(true).follow(left1);
     left1.configure(configL1, null, null);
     left2.configure(configL2, null, null);
 
     //ELEVATOR
     SparkMaxConfig configEleR = new SparkMaxConfig();
-    configEleR.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(false).closedLoop
+    configEleR.idleMode(IdleMode.kCoast).smartCurrentLimit(40).disableFollowerMode().inverted(false).closedLoop
     .pid(PIDVar.elevatorP,
         PIDVar.elevatorI,
         PIDVar.elevatorD,
         ClosedLoopSlot.kSlot0);
     SparkMaxConfig configEleL = new SparkMaxConfig();
-    configEleL.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(false).follow(elevatorR, true).closedLoop
+    configEleL.idleMode(IdleMode.kCoast).smartCurrentLimit(40).inverted(false).follow(elevatorR, true).closedLoop
     .pid(PIDVar.elevatorP,
         PIDVar.elevatorI,
         PIDVar.elevatorD,
@@ -168,24 +179,35 @@ public class Robot extends TimedRobot {
 
     //MANIPULATOR
     SparkMaxConfig configManRight = new SparkMaxConfig();
-    configManRight.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(true);
+    configManRight.idleMode(IdleMode.kCoast).smartCurrentLimit(40).disableFollowerMode().inverted(true);
 
     SparkMaxConfig configManLeft = new SparkMaxConfig();
-    configManLeft.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(false);
+    configManLeft.idleMode(IdleMode.kCoast).smartCurrentLimit(40).disableFollowerMode().inverted(false);
     manRight.configure(configManRight, null, null);
     manLeft.configure(configManLeft, null, null);
 
   }
 
+  public void robotPeriodic() {
+    CommandScheduler.getInstance().run();
+    if (mode == "auton") {
+      UpdatePeriodic.updateSensorValues();
+    } else {
+      UpdatePeriodic.updateSensorValues();
+      new UpdatePeriodic().updateControllerInputs();
+    }
+  }
+
   /** This function is run once each time the robot enters autonomous mode. */
   @Override
   public void autonomousInit() {
+    mode = "auton";
     gyro.reset();
     // starting and reseting the timer used in auton
     autonTimer.reset();
     // pid (right)
     SparkMaxConfig configR1 = new SparkMaxConfig();
-    configR1.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(false);
+    configR1.idleMode(IdleMode.kCoast).smartCurrentLimit(40).disableFollowerMode().inverted(false);
     // .closedLoop
     // .pid(PIDVar.drvRightP,
     //     PIDVar.drvRightI,
@@ -193,7 +215,7 @@ public class Robot extends TimedRobot {
     //     ClosedLoopSlot.kSlot0);
     SparkMaxConfig configR2 = new SparkMaxConfig();
 
-    configR2.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(false).follow(right1);
+    configR2.idleMode(IdleMode.kCoast).smartCurrentLimit(40).inverted(false).follow(right1);
     // .closedLoop
     // .pid(PIDVar.autonLeftP,
     //     PIDVar.autonLeftI,
@@ -205,7 +227,7 @@ public class Robot extends TimedRobot {
 
     // pid (left)
     SparkMaxConfig configL1 = new SparkMaxConfig();
-    configL1.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(true);
+    configL1.idleMode(IdleMode.kCoast).smartCurrentLimit(40).disableFollowerMode().inverted(true);
     // .closedLoop
     // .pid(PIDVar.autonLeftP,
     //     PIDVar.autonLeftI,
@@ -213,7 +235,7 @@ public class Robot extends TimedRobot {
     //     ClosedLoopSlot.kSlot0);
 
     SparkMaxConfig configL2 = new SparkMaxConfig();
-    configL2.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(true).follow(left1);
+    configL2.idleMode(IdleMode.kCoast).smartCurrentLimit(40).inverted(true).follow(left1);
     // .closedLoop
     // .pid(PIDVar.autonLeftP,
     //     PIDVar.autonLeftI,
@@ -227,8 +249,6 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-
-    UpdatePeriodic.updateSensorValues();
     if (autonConst.strt) {
       // move 1 ft (12 in)
       new Auton().intake().schedule();;
@@ -266,25 +286,25 @@ public class Robot extends TimedRobot {
       // if the elevator is at level 1, then go forward 3 inches, into the shelf
       if (Math.abs(Elevator.CalcDist(1, RobotConstants.elevatorRotHeight) - elevatorEnc.getPosition()) <= 0.5) {
         autonConst.movToshelf = false;
-        autonConst.push = true;
         new Auton().goFwd(Auton.distToRot(3)).schedule();;
         new WaitCommand(1).schedule();;
+        autonConst.push = true;
       }
 
       if (autonConst.push) {
         // release the CUBEEE
+        autonConst.push = false;
         new Auton().outake().schedule();;
         new WaitCommand(1).schedule();;
         autonConst.outTaked = true;
-        autonConst.push = false;
       }
 
       if (autonConst.outTaked) {
         //move backwards 6 inches (0.5 ft)
         autonConst.outTaked = false;
-        autonConst.backedUp = true;
         new Auton().goFwd(Auton.distToRot(-6)).schedule();;
         new WaitCommand(1).schedule();;
+        autonConst.backedUp = true;
       }
       if (autonConst.backedUp) {
         // elevator bottom
@@ -308,6 +328,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
+    mode = "teleop";
     // System.out.println("WARNING: RESETING ELEVATOR 0");
     // Elevator.reset0(false);
     // elevatorEnc.setPosition(0);
@@ -315,17 +336,17 @@ public class Robot extends TimedRobot {
     drivModeTimer.reset();
     //unpid the pid (right)
     SparkMaxConfig configR1 = new SparkMaxConfig();
-    configR1.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(false);
+    configR1.idleMode(IdleMode.kCoast).smartCurrentLimit(40).disableFollowerMode().inverted(false);
     SparkMaxConfig configR2 = new SparkMaxConfig();
-    configR2.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(false).follow(right1);
+    configR2.idleMode(IdleMode.kCoast).smartCurrentLimit(40).inverted(false).follow(right1);
     right1.configure(configR1, null, null);
     right2.configure(configR2, null, null);
 
     //unpid the pid (left)
     SparkMaxConfig configL1 = new SparkMaxConfig();
-    configL1.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(true);
+    configL1.idleMode(IdleMode.kCoast).smartCurrentLimit(40).disableFollowerMode().inverted(true);
     SparkMaxConfig configL2 = new SparkMaxConfig();
-    configL2.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(true).follow(left1);
+    configL2.idleMode(IdleMode.kCoast).smartCurrentLimit(40).inverted(true).follow(left1);
     left1.configure(configL1, null, null);
     left2.configure(configL2, null, null);
   }
@@ -335,36 +356,38 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     // UpdatePeriodic.updateControllerInputs();
     UpdatePeriodic.updateSensorValues();
+    UpdatePeriodic.updateShuffleboardValues();
+    new UpdatePeriodic().ABXYDpadUpdate();
+    new UpdatePeriodic().updateControllerInputs();
     // newTabKevin.add("Elevator Height ", RobotConstants.elevatorHeight);
 
     // ELEVATOR
     if (RobotConstants.bottEndstop == true) {
       elevatorEnc.setPosition(0);
       // System.out.println("At bottom, reseting ENC zero");
-    }
-
-    
+    }    
 
     // ANY Elevator movment
     // OPPERA_CONTROLLER.a().whileTrue(Elevator.elevatorSetFancy());
-    if (RobotConstants.OpperaaButton) { // lvl1
-      // RobotConstants.elevatorOutput = (Elevator.CalcDist(1, RobotConstants.elevatorRotHeight)
-      //     / (RobotConstants.elevatorMaxRot));
-        new Elevator().elevatorSetFancy(1).schedule();
+    // if (RobotConstants.OpperaaButton) { // lvl1
+    //   // RobotConstants.elevatorOutput = (Elevator.CalcDist(1, RobotConstants.elevatorRotHeight)
+    //   //     / (RobotConstants.elevatorMaxRot));
+    //     new Elevator().elevatorSetFancy(1).schedule();
   
-    } else if (RobotConstants.OpperayButton) { // lvl3
-      // RobotConstants.elevatorOutput = (Elevator.CalcDist(3, RobotConstants.elevatorRotHeight)
-      //     / (RobotConstants.elevatorMaxRot));
-      //     RobotConstants.PIDMode = true;
-        new Elevator().elevatorSetFancy(3).schedule();
+    // } else if (RobotConstants.OpperayButton) { // lvl3
+    //   // RobotConstants.elevatorOutput = (Elevator.CalcDist(3, RobotConstants.elevatorRotHeight)
+    //   //     / (RobotConstants.elevatorMaxRot));
+    //   //     RobotConstants.PIDMode = true;
+    //     new Elevator().elevatorSetFancy(3).schedule();
 
-    } else if (RobotConstants.OpperaxButton) { // lvl2
-      // RobotConstants.elevatorOutput = (Elevator.CalcDist(2, RobotConstants.elevatorRotHeight)
-      //     / (RobotConstants.elevatorMaxRot));
-      //     RobotConstants.PIDMode = true;
-        new Elevator().elevatorSetFancy(2).schedule();
+    // } else if (RobotConstants.OpperaxButton) { // lvl2
+    //   // RobotConstants.elevatorOutput = (Elevator.CalcDist(2, RobotConstants.elevatorRotHeight)
+    //   //     / (RobotConstants.elevatorMaxRot));
+    //   //     RobotConstants.PIDMode = true;
+    //     new Elevator().elevatorSetFancy(2).schedule();
 
-    } else if (RobotConstants.OpperaDPadUp) { // DPAD movment (manual)
+    // } else 
+    if (RobotConstants.OpperaDPadUp) { // DPAD movment (manual)
 
       if (RobotConstants.elevatorRotHeight > RobotConstants.maxHgtSlowThrthHld) {
         RobotConstants.elevatorOutput = (0.1);
@@ -548,5 +571,6 @@ public class Robot extends TimedRobot {
 
 
   }
+
 
 }

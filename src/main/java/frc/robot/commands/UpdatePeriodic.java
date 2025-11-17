@@ -26,6 +26,10 @@ public class UpdatePeriodic extends SubsystemBase {
         return this.run(()->{});
     }
 
+    public Command RunCommand(Command command) {
+        return this.run(() -> {command.schedule();});
+    }
+
     /**
      * Gets the value from the controllers and updates it in the code
      */
@@ -101,6 +105,13 @@ public class UpdatePeriodic extends SubsystemBase {
         Robot.OPPERA_CONTROLLER.povUpLeft().onFalse(SetBool(RobotConstants.OpperaDPadUpLeft, false));
 
     }
+
+    public void ABXYDpadUpdate() {
+        Robot.OPPERA_CONTROLLER.a().whileTrue(new Elevator().elevatorSetFancy(1));
+        Robot.OPPERA_CONTROLLER.y().whileTrue(new Elevator().elevatorSetFancy(3));
+        Robot.OPPERA_CONTROLLER.b().whileTrue(new Elevator().elevatorSetFancy(2));
+    }
+
     public static void updateSensorValues() {
         RobotConstants.elevatorRotHeight = frc.robot.Robot.elevatorEnc.getPosition();
         RobotConstants.carrigeBot=frc.robot.Robot.CarrigeBottom.get();
