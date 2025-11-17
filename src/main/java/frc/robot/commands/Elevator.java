@@ -188,7 +188,8 @@ public class Elevator extends SubsystemBase{
   public Command elevatorSetFancy(int level) {
     BooleanSupplier condition = () -> CalcDist(level, RobotConstants.elevatorRotHeight)/RobotConstants.elevatorMaxHeight > 0.06;
     return run(() -> {Robot.elevatorR.set(CalcDist(level, RobotConstants.elevatorRotHeight)/RobotConstants.elevatorMaxRot);})
-    .onlyWhile(condition);
+    .onlyWhile(condition)
+    .finallyDo(() -> {Robot.elevatorR.set(0.03);});
   }
 
     
