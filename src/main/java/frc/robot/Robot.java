@@ -435,12 +435,8 @@ public class Robot extends TimedRobot {
 
     }
 
-    if ((RobotConstants.PIDMode)){
-      elevatorRPID.setReference(RobotConstants.elevatorOutput, ControlType.kVelocity);
-    } else{
-    elevatorR.set(RobotConstants.elevatorOutput); // one of the only times the elevator speed actually gets set in the
-                                                  // code
-    }
+
+    elevatorR.set(RobotConstants.elevatorOutput); // one of the only times the elevator speed actually gets set in the code
     System.err.println(elevatorR.getEncoder());
 
     // MANIPULATOR
