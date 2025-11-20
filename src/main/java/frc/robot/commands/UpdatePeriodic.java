@@ -21,7 +21,6 @@ public class UpdatePeriodic extends SubsystemBase {
     public Drivetrain drivetrain = new Drivetrain();
     public Elevator elevator = new Elevator();
     public Manipulator manipulator = new Manipulator();
-    public UpdatePeriodic updatePeriodic = new UpdatePeriodic();
     /**
      * Set's bool to TF (True or False)
      */

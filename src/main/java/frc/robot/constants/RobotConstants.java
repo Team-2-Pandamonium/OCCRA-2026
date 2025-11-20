@@ -1,5 +1,7 @@
 package frc.robot.constants;
 
+import frc.robot.Robot;
+
 public class RobotConstants {
 
     // public static final double leftDrift = 1; // at least one drift should be 1,
@@ -72,9 +74,9 @@ public class RobotConstants {
     public static boolean OpperaxButton=false;
     public static boolean OpperaaButton=false;
     public static boolean OpperayButton=false;
-    public static boolean OpperaDPadUp=false;
-    public static boolean OpperaDPadUpRight=false;
-    public static boolean OpperaDPadRight=false;
+    public static boolean OpperaDPadUp= Robot.OPPERA_CONTROLLER.povUp().getAsBoolean();
+    public static boolean OpperaDPadUpRight=Robot.OPPERA_CONTROLLER.povUpRight().getAsBoolean();
+    public static boolean OpperaDPadRight=Robot.OPPERA_CONTROLLER.povRight().getAsBoolean();
     public static boolean OpperaDPadDownRight=false;
     public static boolean OpperaDPadDown=false;
     public static boolean OpperaDPadDownLeft=false;

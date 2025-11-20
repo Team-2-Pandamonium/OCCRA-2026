@@ -109,9 +109,9 @@ public class Robot extends TimedRobot {
   public final BooleanSupplier ElevatorSLowDownHeight = () -> RobotConstants.elevatorRotHeight <= RobotConstants.minDecelerationThreshold;
   public final BooleanSupplier OverExtend = () -> (RobotConstants.OpperaDPadUp || RobotConstants.OpperaDPadUpRight) && RobotConstants.topEndstop;
   public final BooleanSupplier UnderExtend = () -> (RobotConstants.OpperaDPadDown || RobotConstants.OpperaDPadDownRight) && RobotConstants.bottEndstop;
-  public final BooleanSupplier NormalMode = () -> (RobotConstants.slowMode && RobotConstants.turboMode) || (!RobotConstants.slowMode && !RobotConstants.turboMode);
   public final BooleanSupplier SlowMode = () -> RobotConstants.slowMode;
   public final BooleanSupplier TurboMode = () -> RobotConstants.turboMode;
+  public final BooleanSupplier NormalMode = () -> (RobotConstants.slowMode && RobotConstants.turboMode) || (!RobotConstants.slowMode && !RobotConstants.turboMode);
   public final BooleanSupplier AtTop = () -> RobotConstants.topEndstop || (RobotConstants.stg2Top == false);
   public final BooleanSupplier Backwards = () -> RobotConstants.DrivleftStick > 0 && RobotConstants.DrivrightStick > 0;
   public final BooleanSupplier NotBackwards = () -> RobotConstants.DrivleftStick <= 0 && RobotConstants.DrivrightStick <= 0;
@@ -153,7 +153,7 @@ public class Robot extends TimedRobot {
   public UpdatePeriodic updatePeriodic = new UpdatePeriodic();
 
 
-  private SlewRateLimiter leftLimiter = new SlewRateLimiter(3.0);  // 3 units/sec
+  private SlewRateLimiter leftLimiter = new SlewRateLimiter(.5);  // 3 units/sec
   private SlewRateLimiter rightLimiter = new SlewRateLimiter(.5);
 
 
@@ -308,8 +308,8 @@ public class Robot extends TimedRobot {
       // go to level 1 on elevator
       if (autonConst.movToshelf) {
         autonConst.trnd = false;
-        auton.goToSpecificElevatorLevel(1).schedule();;
-        new WaitCommand(2).schedule();;
+        auton.goToSpecificElevatorLevel(1).schedule();
+        new WaitCommand(2).schedule();
       }
 
       // elevatorR.set(RobotConstants.elevatorOutput);
@@ -317,8 +317,8 @@ public class Robot extends TimedRobot {
       // if the elevator is at level 1, then go forward 3 inches, into the shelf
       if (Math.abs(Elevator.CalcDist(1, RobotConstants.elevatorRotHeight) - elevatorEnc.getPosition()) <= 0.5) {
         autonConst.movToshelf = false;
-        auton.goFwd(Auton.distToRot(3)).schedule();;
-        new WaitCommand(1).schedule();;
+        auton.goFwd(Auton.distToRot(3)).schedule();
+        new WaitCommand(1).schedule();
         autonConst.push = true;
       }
 
@@ -444,10 +444,7 @@ public class Robot extends TimedRobot {
     //Drivebase 
 
 
-    Commands.run(() -> {
-      RobotConstants.turboMode = false;
-      RobotConstants.slowMode= false;
-    }).onlyWhile(NormalMode);
+
 
     Commands.run(() -> {
       RobotConstants.turboMode = false;
@@ -478,19 +475,17 @@ public class Robot extends TimedRobot {
     DRIV_CONTROLLER.L2().whileTrue(drivetrain.GoFromLeftTrigger());
     DRIV_CONTROLLER.R2().whileTrue(drivetrain.GoFromRightTrigger());
 
-    Commands.run(() -> {
-      RobotConstants.rightOutput = RobotConstants.DrivrightStick * 20;
-      RobotConstants.leftOutput = RobotConstants.DrivleftStick * 20;
-      RobotConstants.robotAccMaxSpeed = 1;
-    }).onlyWhile(GoFasterButNotTurbo);
+    // Commands.run(() -> {
+    //   RobotConstants.robotAccMaxSpeed = 1;
+    // }).onlyWhile(GoFasterButNotTurbo);
 
   
     // DRIVE
     RobotConstants.leftOutput = Math.abs(RobotConstants.DrivleftStick) * RobotConstants.DrivleftStick;
     RobotConstants.rightOutput = Math.abs(RobotConstants.DrivrightStick) * RobotConstants.DrivrightStick;
 
-    left1.set(leftLimiter.calculate(RobotConstants.leftOutput * RobotConstants.robotAccMaxSpeed));
-    right1.set(rightLimiter.calculate(RobotConstants.rightOutput * RobotConstants.robotAccMaxSpeed));
+    left1.set(RobotConstants.leftOutput * RobotConstants.robotAccMaxSpeed);
+    right1.set(RobotConstants.rightOutput * RobotConstants.robotAccMaxSpeed);
 
 
   }

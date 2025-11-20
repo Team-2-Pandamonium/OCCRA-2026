@@ -8,6 +8,8 @@ public class Drivetrain extends SubsystemBase {
     public Command SetSlowMode() {
         return this.run(() -> {
             RobotConstants.slowMode = true;
+            System.err.println("Slow");
+
         });
     };
 
