@@ -1,12 +1,15 @@
 package frc.robot.commands;
 
 import frc.robot.commands.UpdatePeriodic;
+import frc.robot.Robot;
 import frc.robot.commands.Auton;
 import frc.robot.commands.Elevator;
 import frc.robot.commands.Manipulator;
 import frc.robot.constants.PIDVar;
 import frc.robot.constants.RobotConstants;
 import frc.robot.constants.autonConst;
+
+import java.util.function.BooleanSupplier;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
@@ -34,9 +37,21 @@ import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.SPI.Port;
 
-public class AutoAlignment {
+public class AutoAlignment extends SubsystemBase {
+    public Command TurnAngle(int Angle) {
+        BooleanSupplier Condition = () -> Robot.gyro.getAngle() > Angle+0.1 && Robot.gyro.getAngle() < Angle-0.1;
 
+        return this.run(() -> {
+        Robot.right1.set(0.5);
+        Robot.left1.set(-0.5);})
+        .onlyWhile(Condition);
+    }
+
+    public Command DriveUntil() {
+        return this.run(() -> {});
+    }
 }
