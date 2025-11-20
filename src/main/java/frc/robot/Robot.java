@@ -125,7 +125,7 @@ public class Robot extends TimedRobot {
   public static final UsbCamera camera = CameraServer.startAutomaticCapture();
   // controllers
   public static final CommandPS5Controller DRIV_CONTROLLER = new CommandPS5Controller(0);
-  public static final CommandXboxController OPPERA_CONTROLLER = new CommandXboxController(1);
+  public static final CommandPS5Controller OPPERA_CONTROLLER = new CommandPS5Controller(1);
 
   // Timers :(
   public static final Timer drivModeTimer=new Timer();
@@ -154,7 +154,7 @@ public class Robot extends TimedRobot {
 
 
   private SlewRateLimiter leftLimiter = new SlewRateLimiter(3.0);  // 3 units/sec
-  private SlewRateLimiter rightLimiter = new SlewRateLimiter(3.0);
+  private SlewRateLimiter rightLimiter = new SlewRateLimiter(.5);
 
 
   /**
@@ -367,17 +367,17 @@ public class Robot extends TimedRobot {
     drivModeTimer.reset();
     //unpid the pid (right)
     SparkMaxConfig configR1 = new SparkMaxConfig();
-    configR1.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(false);
+    configR1.idleMode(IdleMode.kBrake).smartCurrentLimit(50).disableFollowerMode().inverted(false);
     SparkMaxConfig configR2 = new SparkMaxConfig();
-    configR2.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(false).follow(right1);
+    configR2.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(false).follow(right1);
     right1.configure(configR1, null, null);
     right2.configure(configR2, null, null);
 
     //unpid the pid (left)
     SparkMaxConfig configL1 = new SparkMaxConfig();
-    configL1.idleMode(IdleMode.kBrake).smartCurrentLimit(40).disableFollowerMode().inverted(true);
+    configL1.idleMode(IdleMode.kBrake).smartCurrentLimit(50).disableFollowerMode().inverted(true);
     SparkMaxConfig configL2 = new SparkMaxConfig();
-    configL2.idleMode(IdleMode.kBrake).smartCurrentLimit(40).inverted(true).follow(left1);
+    configL2.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(true).follow(left1);
     left1.configure(configL1, null, null);
     left2.configure(configL2, null, null);
 
@@ -432,10 +432,10 @@ public class Robot extends TimedRobot {
 
 
   //Manipulator
-    OPPERA_CONTROLLER.rightTrigger(0.01).whileTrue(manipulator.SetManipulators(RobotConstants.manMaxSPD * OPPERA_CONTROLLER.getLeftTriggerAxis()));
-    OPPERA_CONTROLLER.leftTrigger(0.01).whileTrue(manipulator.SetManipulators(-RobotConstants.manMaxSPD * OPPERA_CONTROLLER.getRightTriggerAxis()));
+    OPPERA_CONTROLLER.L2().whileTrue(manipulator.SetManipulators(RobotConstants.manMaxSPD * OPPERA_CONTROLLER.getL2Axis()));
+    OPPERA_CONTROLLER.L2().whileTrue(manipulator.SetManipulators(-RobotConstants.manMaxSPD * OPPERA_CONTROLLER.getR2Axis()));
 
-    OPPERA_CONTROLLER.b().whileTrue(manipulator.RandomWeirdThingThatOperatorBButtonDoes());
+    OPPERA_CONTROLLER.circle().whileTrue(manipulator.RandomWeirdThingThatOperatorBButtonDoes());
 
     DRIV_CONTROLLER.L1().whileTrue(drivetrain.SetSlowMode());
     DRIV_CONTROLLER.R1().whileTrue(drivetrain.SetTurboMode());
@@ -448,6 +448,15 @@ public class Robot extends TimedRobot {
       RobotConstants.turboMode = false;
       RobotConstants.slowMode= false;
     }).onlyWhile(NormalMode);
+
+    Commands.run(() -> {
+      RobotConstants.turboMode = false;
+      RobotConstants.slowModeMaxSpeed = 0.1;
+    }).onlyWhile(Backwards);
+
+    Commands.run(() -> {
+      RobotConstants.slowModeMaxSpeed = 0.125;
+    }).onlyWhile(NotBackwards);
 
     Commands.run(() -> {
       RobotConstants.robotAccMaxSpeed = RobotConstants.slowModeMaxSpeed;
@@ -466,21 +475,12 @@ public class Robot extends TimedRobot {
       RobotConstants.turboMode = false;
     }).onlyWhile(AtTop);
 
-    Commands.run(() -> {
-      RobotConstants.turboMode = false;
-      RobotConstants.slowModeMaxSpeed = 0.1;
-    }).onlyWhile(Backwards);
-
-    Commands.run(() -> {
-      RobotConstants.slowModeMaxSpeed = 0.125;
-    }).onlyWhile(NotBackwards);
-
     DRIV_CONTROLLER.L2().whileTrue(drivetrain.GoFromLeftTrigger());
     DRIV_CONTROLLER.R2().whileTrue(drivetrain.GoFromRightTrigger());
 
     Commands.run(() -> {
-      RobotConstants.rightOutput = RobotConstants.DrivrightStick * 2;
-      RobotConstants.leftOutput = RobotConstants.DrivleftStick * 2;
+      RobotConstants.rightOutput = RobotConstants.DrivrightStick * 20;
+      RobotConstants.leftOutput = RobotConstants.DrivleftStick * 20;
       RobotConstants.robotAccMaxSpeed = 1;
     }).onlyWhile(GoFasterButNotTurbo);
 

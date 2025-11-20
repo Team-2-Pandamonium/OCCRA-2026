@@ -47,14 +47,14 @@ public class Manipulator extends SubsystemBase {
 
     public Command SetManipulators(double Speed) {
         return this.run(() -> {
-            Robot.manLeft.set(RobotConstants.OpperarightTrigger*Speed*3);
+            Robot.manLeft.set(RobotConstants.OpperarightTrigger*Speed);
             Robot.manRight.set(RobotConstants.OpperarightTrigger*Speed);
         });
     }
     
     public Command RandomWeirdThingThatOperatorBButtonDoes() {
         return this.run(() -> {
-            Robot.manLeft.set(RobotConstants.manMaxSPD);
-            Robot.manRight.set(-RobotConstants.manMaxSPD/2);});
+            Robot.manLeft.set(1);
+            Robot.manRight.set(1);});
     }
 }

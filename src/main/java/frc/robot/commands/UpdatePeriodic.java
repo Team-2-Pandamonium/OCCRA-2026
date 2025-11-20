@@ -65,31 +65,31 @@ public class UpdatePeriodic extends SubsystemBase {
         Robot.DRIV_CONTROLLER.R1().onFalse(SetBool(val -> RobotConstants.DrivrightBumper = val, false));
 
         //operator triggers
-        Robot.OPPERA_CONTROLLER.leftTrigger(RobotConstants.Oppdeadzone).whileFalse(SetDouble(val -> RobotConstants.OpperaleftTrigger = val, 0));
-        Robot.OPPERA_CONTROLLER.leftTrigger(RobotConstants.Oppdeadzone).whileTrue(SetDouble(val -> RobotConstants.OpperaleftTrigger = val, RobotConstants.OpperaleftTrigger));
+        Robot.OPPERA_CONTROLLER.L2().whileFalse(SetDouble(val -> RobotConstants.OpperaleftTrigger = val, 0));
+        Robot.OPPERA_CONTROLLER.L2().whileTrue(SetDouble(val -> RobotConstants.OpperaleftTrigger = val, RobotConstants.OpperaleftTrigger));
 
-        Robot.OPPERA_CONTROLLER.rightTrigger(RobotConstants.Oppdeadzone).whileFalse(SetDouble(val -> RobotConstants.OpperarightTrigger = val, 0));
-        Robot.OPPERA_CONTROLLER.rightTrigger(RobotConstants.Oppdeadzone).whileTrue(SetDouble(val -> RobotConstants.OpperarightTrigger = val, RobotConstants.OpperarightTrigger));
+        Robot.OPPERA_CONTROLLER.R2().whileFalse(SetDouble(val -> RobotConstants.OpperarightTrigger = val, 0));
+        Robot.OPPERA_CONTROLLER.R2().whileTrue(SetDouble(val -> RobotConstants.OpperarightTrigger = val, RobotConstants.OpperarightTrigger));
         
         //operator bumpers
-        Robot.OPPERA_CONTROLLER.leftBumper().onTrue(SetBool(val -> RobotConstants.OpperaleftBumper = val, true));
-        Robot.OPPERA_CONTROLLER.leftBumper().onFalse(SetBool(val -> RobotConstants.OpperaleftBumper = val, false));
+        Robot.OPPERA_CONTROLLER.L1().onTrue(SetBool(val -> RobotConstants.OpperaleftBumper = val, true));
+        Robot.OPPERA_CONTROLLER.L1().onFalse(SetBool(val -> RobotConstants.OpperaleftBumper = val, false));
 
-        Robot.OPPERA_CONTROLLER.rightBumper().onTrue(SetBool(val -> RobotConstants.OpperarightBumper = val, true));
-        Robot.OPPERA_CONTROLLER.rightBumper().onFalse(SetBool(val -> RobotConstants.OpperarightBumper = val, false));
+        Robot.OPPERA_CONTROLLER.R1().onTrue(SetBool(val -> RobotConstants.OpperarightBumper = val, true));
+        Robot.OPPERA_CONTROLLER.R2().onFalse(SetBool(val -> RobotConstants.OpperarightBumper = val, false));
 
         //buttons
-        Robot.OPPERA_CONTROLLER.b().onTrue(SetBool(val -> RobotConstants.OpperabButton = val, true));
-        Robot.OPPERA_CONTROLLER.b().onFalse(SetBool(val -> RobotConstants.OpperabButton = val, false));
+        Robot.OPPERA_CONTROLLER.circle().onTrue(SetBool(val -> RobotConstants.OpperabButton = val, true));
+        Robot.OPPERA_CONTROLLER.circle().onFalse(SetBool(val -> RobotConstants.OpperabButton = val, false));
 
-        Robot.OPPERA_CONTROLLER.x().onTrue(SetBool(val -> RobotConstants.OpperaxButton = val, true));
-        Robot.OPPERA_CONTROLLER.x().onFalse(SetBool(val -> RobotConstants.OpperaxButton = val, false));
+        Robot.OPPERA_CONTROLLER.square().onTrue(SetBool(val -> RobotConstants.OpperaxButton = val, true));
+        Robot.OPPERA_CONTROLLER.square().onFalse(SetBool(val -> RobotConstants.OpperaxButton = val, false));
 
-        Robot.OPPERA_CONTROLLER.a().onTrue(SetBool(val -> RobotConstants.OpperaaButton = val, true));
-        Robot.OPPERA_CONTROLLER.a().onFalse(SetBool(val -> RobotConstants.OpperaaButton = val, false));
+        Robot.OPPERA_CONTROLLER.cross().onTrue(SetBool(val -> RobotConstants.OpperaaButton = val, true));
+        Robot.OPPERA_CONTROLLER.cross().onFalse(SetBool(val -> RobotConstants.OpperaaButton = val, false));
 
-        Robot.OPPERA_CONTROLLER.y().onTrue(SetBool(val -> RobotConstants.OpperayButton = val, true));
-        Robot.OPPERA_CONTROLLER.y().onFalse(SetBool(val -> RobotConstants.OpperayButton = val, false));
+        Robot.OPPERA_CONTROLLER.triangle().onTrue(SetBool(val -> RobotConstants.OpperayButton = val, true));
+        Robot.OPPERA_CONTROLLER.triangle().onFalse(SetBool(val -> RobotConstants.OpperayButton = val, false));
 
 
         //dpad
@@ -114,9 +114,9 @@ public class UpdatePeriodic extends SubsystemBase {
     }
 
     public void ABXYDpadUpdate() {
-        Robot.OPPERA_CONTROLLER.a().whileTrue(elevator.elevatorSetFancy(1));
-        Robot.OPPERA_CONTROLLER.y().whileTrue(elevator.elevatorSetFancy(3));
-        Robot.OPPERA_CONTROLLER.b().whileTrue(elevator.elevatorSetFancy(2));
+        Robot.OPPERA_CONTROLLER.cross().whileTrue(elevator.elevatorSetFancy(1));
+        Robot.OPPERA_CONTROLLER.triangle().whileTrue(elevator.elevatorSetFancy(3));
+        Robot.OPPERA_CONTROLLER.circle().whileTrue(elevator.elevatorSetFancy(2));
     }
 
     public static void updateSensorValues() {
