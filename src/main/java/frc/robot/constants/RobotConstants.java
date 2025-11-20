@@ -30,6 +30,8 @@ public class RobotConstants {
     public static final double Level2 = 24 + 17 + 6;
     public static final double Level3 = 24 + (17 * 2) + 6;
     public static final double maxHgtSlowThrthHld=68;
+    public static final double minDecelerationThreshold= 1;
+
     public static boolean carrigeTop;
     public static boolean stg2Top;
     public static boolean carrigeBot;
