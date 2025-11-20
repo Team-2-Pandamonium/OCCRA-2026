@@ -1,6 +1,9 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
+import frc.robot.constants.RobotConstants;
 
 public class Manipulator extends SubsystemBase {
 
@@ -41,5 +44,17 @@ public class Manipulator extends SubsystemBase {
         double wheelRot=LinVel/(Math.PI*4);
         return wheelRot*4;
     }
+
+    public Command SetManipulators(double Speed) {
+        return this.run(() -> {
+            Robot.manLeft.set(RobotConstants.OpperarightTrigger*Speed*3);
+            Robot.manRight.set(RobotConstants.OpperarightTrigger*Speed);
+        });
+    }
     
+    public Command RandomWeirdThingThatOperatorBButtonDoes() {
+        return this.run(() -> {
+            Robot.manLeft.set(RobotConstants.manMaxSPD);
+            Robot.manRight.set(-RobotConstants.manMaxSPD/2);});
+    }
 }

@@ -192,6 +192,10 @@ public class Elevator extends SubsystemBase{
     .finallyDo(() -> {Robot.elevatorR.set(0.03);});
   }
 
+  public Command elevatorSetSpeed(double speed) {
+    return this.run(() -> {Robot.elevatorR.set(speed);});
+  }
+
     
 
 }
