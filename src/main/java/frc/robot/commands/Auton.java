@@ -38,13 +38,13 @@ public class Auton extends SubsystemBase {
 
         if (rot > 0) {
             return this.run(() -> 
-                {Robot.left1.set(-RobotConstants.autonSpeed * ((Math.abs(Robot.drvLEnc.getPosition()-encLOffset) - Math.abs(rot))/((Math.abs(Robot.drvLEnc.getPosition()-encLOffset) - Math.abs(rot))+1)));
-                Robot.right1.set(-RobotConstants.autonSpeed * ((Math.abs(Robot.drvREnc.getPosition()-encROffset) - Math.abs(rot))/((Math.abs(Robot.drvREnc.getPosition()-encROffset) - Math.abs(rot))+1)));})
+                {Robot.left1.set(-0.25 * ((Math.abs(Robot.drvLEnc.getPosition()-encLOffset) - Math.abs(rot))/((Math.abs(Robot.drvLEnc.getPosition()-encLOffset) - Math.abs(rot))+1)));
+                Robot.right1.set(-0.25 * ((Math.abs(Robot.drvREnc.getPosition()-encROffset) - Math.abs(rot))/((Math.abs(Robot.drvREnc.getPosition()-encROffset) - Math.abs(rot))+1)));})
                 .onlyWhile(whileCondition);
         } else {
             return this.run(() -> 
-                {Robot.left1.set(RobotConstants.autonSpeed * ((Math.abs(Robot.drvLEnc.getPosition()-encLOffset) - Math.abs(rot))/((Math.abs(Robot.drvLEnc.getPosition()-encLOffset) - Math.abs(rot))+1)));
-                Robot.right1.set(RobotConstants.autonSpeed * ((Math.abs(Robot.drvREnc.getPosition()-encROffset) - Math.abs(rot))/((Math.abs(Robot.drvREnc.getPosition()-encROffset) - Math.abs(rot))+1)));})
+                {Robot.left1.set(0.25 * ((Math.abs(Robot.drvLEnc.getPosition()-encLOffset) - Math.abs(rot))/((Math.abs(Robot.drvLEnc.getPosition()-encLOffset) - Math.abs(rot))+1)));
+                Robot.right1.set(0.25 * ((Math.abs(Robot.drvREnc.getPosition()-encROffset) - Math.abs(rot))/((Math.abs(Robot.drvREnc.getPosition()-encROffset) - Math.abs(rot))+1)));})
                 .onlyWhile(whileCondition);
         }
 
@@ -61,14 +61,14 @@ public class Auton extends SubsystemBase {
 
         if (LR == "L") {
             return this.run(() -> {
-            Robot.right1.set(-RobotConstants.autonSpeed);
-            Robot.left1.set(RobotConstants.autonSpeed);})
+            Robot.right1.set(-0.25);
+            Robot.left1.set(0.25);})
             .onlyWhile(leftReq)
             .andThen(() -> {Robot.left1.set(0); Robot.right1.set(0);});
         } else if (LR == "R") {
             return this.run(() -> {
-            Robot.right1.set(RobotConstants.autonSpeed);
-            Robot.left1.set(-RobotConstants.autonSpeed);})
+            Robot.right1.set(0.25);
+            Robot.left1.set(-0.25);})
             .onlyWhile(rightReq)
             .andThen(() -> {Robot.left1.set(0); Robot.right1.set(0);});
             } else {
@@ -77,9 +77,8 @@ public class Auton extends SubsystemBase {
         }
 
     public Command goToSpecificElevatorLevel(int level) {
-        RobotConstants.elevatorOutput = (Elevator.CalcDist(level, RobotConstants.elevatorRotHeight)/(RobotConstants.elevatorMaxRot));
-        BooleanSupplier Condition = () -> Math.abs(Elevator.CalcDist(level, RobotConstants.elevatorRotHeight) - Robot.elevatorEnc.getPosition()) >= 0.5;
-        return this.run(() -> {Robot.elevatorR.set(-RobotConstants.elevatorOutput);})
+        BooleanSupplier Condition = () -> Math.abs(Elevator.CalcDist(level, Robot.elevatorEnc.getPosition()) - Robot.elevatorEnc.getPosition()) >= 0.5;
+        return this.run(() -> {Robot.elevatorR.set(-(Elevator.CalcDist(level, Robot.elevatorEnc.getPosition())/(76.25)));})
         .onlyWhile(Condition)
         .andThen(() -> {Robot.elevatorR.set(0);});
     }

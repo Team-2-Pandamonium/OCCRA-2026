@@ -13,7 +13,7 @@ public class RobotConstants {
 
     // driving
     public static final double robotMaxSpeed = 0.5;
-    public static double slowModeMaxSpeed = 0.125;
+    public static final double slowModeMaxSpeed = 0.125;
     public static double robotAccMaxSpeed = 0.5;
     public static boolean slowMode=false;
     public static boolean turboMode=false;
@@ -24,7 +24,7 @@ public class RobotConstants {
 
     // elevator (all values in inches)
     public static final double kPoffset = 25;
-    public static final double elevatorMaxHeight = 60;
+    public static final double elevatorMaxHeight = 74;
     public static final double elevatorMaxRot = 76.25; //EXPERIMENTALLY DETERMINED
     public static final double elevatorMaxSpeed = 1;
     public static double elevatorRotHeight; //height in rotations
@@ -32,7 +32,7 @@ public class RobotConstants {
     public static final double Level2 = 24 + 17 + 6;
     public static final double Level3 = 24 + (17 * 2) + 6;
     public static final double maxHgtSlowThrthHld=68;
-    public static final double minDecelerationThreshold= 1;
+    public static final double minDecelerationThreshold= 3;
 
     public static boolean carrigeTop;
     public static boolean stg2Top;
@@ -54,7 +54,7 @@ public class RobotConstants {
 
     // inputs, driver
     public static double DrivrightTrigger;
-    public static double DrivleftStick;
+    public static double DrivleftStick = Robot.DRIV_CONTROLLER.getLeftY();
     public static double DrivrightStick;
     public static Boolean DrivleftBumper=false;
     public static Boolean DrivrightBumper=false;

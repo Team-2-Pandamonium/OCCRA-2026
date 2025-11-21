@@ -104,18 +104,18 @@ public class Robot extends TimedRobot {
 
   //BooleanSuppliers  
   public final BooleanSupplier CarriageBottom2 = () -> CarrigeBottom.get();
-  public final BooleanSupplier ElevatorHeightTooMuch = () -> RobotConstants.elevatorRotHeight > RobotConstants.maxHgtSlowThrthHld;
-  public final BooleanSupplier NotElevatorHeightTooMuch = () -> RobotConstants.elevatorRotHeight <= RobotConstants.maxHgtSlowThrthHld;
-  public final BooleanSupplier ElevatorSLowDownHeight = () -> RobotConstants.elevatorRotHeight <= RobotConstants.minDecelerationThreshold;
-  public final BooleanSupplier OverExtend = () -> (RobotConstants.OpperaDPadUp || RobotConstants.OpperaDPadUpRight) && RobotConstants.topEndstop;
-  public final BooleanSupplier UnderExtend = () -> (RobotConstants.OpperaDPadDown || RobotConstants.OpperaDPadDownRight) && RobotConstants.bottEndstop;
-  public final BooleanSupplier SlowMode = () -> RobotConstants.slowMode;
-  public final BooleanSupplier TurboMode = () -> RobotConstants.turboMode;
-  public final BooleanSupplier NormalMode = () -> (RobotConstants.slowMode && RobotConstants.turboMode) || (!RobotConstants.slowMode && !RobotConstants.turboMode);
-  public final BooleanSupplier AtTop = () -> RobotConstants.topEndstop || (RobotConstants.stg2Top == false);
-  public final BooleanSupplier Backwards = () -> RobotConstants.DrivleftStick > 0 && RobotConstants.DrivrightStick > 0;
-  public final BooleanSupplier NotBackwards = () -> RobotConstants.DrivleftStick <= 0 && RobotConstants.DrivrightStick <= 0;
-  public final BooleanSupplier GoFasterButNotTurbo = () -> (RobotConstants.DrivrightStick > .75 && RobotConstants.DrivleftStick < -.75) || (RobotConstants.DrivrightStick < -.75 && RobotConstants.DrivleftStick > .75);
+  public final BooleanSupplier ElevatorHeightTooMuch = () -> elevatorEnc.getPosition() > RobotConstants.maxHgtSlowThrthHld;
+  public final BooleanSupplier NotElevatorHeightTooMuch = () -> elevatorEnc.getPosition() <= RobotConstants.maxHgtSlowThrthHld;
+  public final BooleanSupplier ElevatorSLowDownHeight = () -> elevatorEnc.getPosition() <= RobotConstants.minDecelerationThreshold;
+  public final BooleanSupplier OverExtend = () -> (OPPERA_CONTROLLER.povUp().getAsBoolean() || OPPERA_CONTROLLER.povUpRight().getAsBoolean()) && CarrigeTop.get();
+  public final BooleanSupplier UnderExtend = () -> (OPPERA_CONTROLLER.povDown().getAsBoolean() || OPPERA_CONTROLLER.povDownRight().getAsBoolean()) && CarrigeBottom.get();
+  public final BooleanSupplier SlowMode = () -> DRIV_CONTROLLER.L1().getAsBoolean();
+  public final BooleanSupplier TurboMode = () -> DRIV_CONTROLLER.R1().getAsBoolean();
+  public final BooleanSupplier NormalMode = () -> (SlowMode.getAsBoolean() && TurboMode.getAsBoolean()) || (!SlowMode.getAsBoolean() && !TurboMode.getAsBoolean());
+  public final BooleanSupplier AtTop = (() -> (CarrigeTop.get() || (!stg2Top.get())));
+  public final BooleanSupplier Backwards = (() -> ((DRIV_CONTROLLER.getLeftY() > .01) && (DRIV_CONTROLLER.getLeftY() > .01)));
+  public final BooleanSupplier NotBackwards = () -> DRIV_CONTROLLER.getLeftY() <= -.01 && DRIV_CONTROLLER.getLeftY() <= -.01;
+  public final BooleanSupplier GoFasterButNotTurbo = () -> (DRIV_CONTROLLER.getRightY() > .75 && DRIV_CONTROLLER.getLeftY() < -.75) || (DRIV_CONTROLLER.getRightY() < -.75 && DRIV_CONTROLLER.getLeftY() > .75);
 
 
   // gyroscope
@@ -221,13 +221,10 @@ public class Robot extends TimedRobot {
 
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    if (mode == "auton") {
-      UpdatePeriodic.updateSensorValues();
-    } else {
-      UpdatePeriodic.updateSensorValues();
-      new UpdatePeriodic().updateControllerInputs();
+    UpdatePeriodic.updateSensorValues();
+    updatePeriodic.updateControllerInputs();
     }
-  }
+  
 
   /** This function is run once each time the robot enters autonomous mode. */
   @Override
@@ -326,15 +323,15 @@ public class Robot extends TimedRobot {
         // release the CUBEEE
         autonConst.push = false;
         auton.outake().schedule();;
-        new WaitCommand(1).schedule();;
+        new WaitCommand(1).schedule();
         autonConst.outTaked = true;
       }
 
       if (autonConst.outTaked) {
         //move backwards 6 inches (0.5 ft)
         autonConst.outTaked = false;
-        auton.goFwd(Auton.distToRot(-6)).schedule();;
-        new WaitCommand(1).schedule();;
+        auton.goFwd(Auton.distToRot(-6)).schedule();
+        new WaitCommand(1).schedule();
         autonConst.backedUp = true;
       }
       if (autonConst.backedUp) {
@@ -415,16 +412,32 @@ public class Robot extends TimedRobot {
     }    
 
     OPPERA_CONTROLLER.povUp().and(ElevatorHeightTooMuch).whileTrue(elevator.elevatorSetSpeed(0.1));
-    
-    OPPERA_CONTROLLER.povUp().and(NotElevatorHeightTooMuch).whileTrue(elevator.elevatorSetSpeed(.8));
-    OPPERA_CONTROLLER.povUp().and(ElevatorSLowDownHeight).whileTrue(elevator.elevatorSetSpeed(.2));
+    OPPERA_CONTROLLER.povUpRight().and(ElevatorHeightTooMuch).whileTrue(elevator.elevatorSetSpeed(0.1));
+    OPPERA_CONTROLLER.povUpLeft().and(ElevatorHeightTooMuch).whileTrue(elevator.elevatorSetSpeed(0.1));
 
-    OPPERA_CONTROLLER.povUpRight().and(ElevatorHeightTooMuch).whileTrue(elevator.elevatorSetSpeed(0.05));
-    OPPERA_CONTROLLER.povUpRight().and(NotElevatorHeightTooMuch).whileTrue(elevator.elevatorSetSpeed(0.2));
+    if (OPPERA_CONTROLLER.povUp().getAsBoolean() || OPPERA_CONTROLLER.povUpLeft().getAsBoolean() || OPPERA_CONTROLLER.povUpRight().getAsBoolean()) {
+      if (elevatorEnc.getPosition() > RobotConstants.maxHgtSlowThrthHld) { //too high
+        elevatorR.set(0.1);
+    } else if (elevatorEnc.getPosition() < RobotConstants.minDecelerationThreshold) {
+        elevatorR.set(0.2);
+    } else {
+        elevatorR.set(0.5);
 
+    }
+  }
+
+  if (OPPERA_CONTROLLER.povUp().getAsBoolean()){
+    System.err.println("Going Up");
+    System.err.println(OPPERA_CONTROLLER.povUp().getAsBoolean());
+
+  }
+
+    OPPERA_CONTROLLER.povDownLeft().whileTrue(elevator.elevatorSetSpeed(-0.5));
+    OPPERA_CONTROLLER.povDownRight().whileTrue(elevator.elevatorSetSpeed(-0.5));
     OPPERA_CONTROLLER.povDown().whileTrue(elevator.elevatorSetSpeed(-0.5));
 
-    OPPERA_CONTROLLER.povDownRight().whileTrue(elevator.elevatorSetSpeed(-0.1));
+
+
 
     Commands.run(() -> {elevatorR.set(0);}).onlyWhile(OverExtend);
 
@@ -446,31 +459,34 @@ public class Robot extends TimedRobot {
 
 
 
-    Commands.run(() -> {
-      RobotConstants.turboMode = false;
-      RobotConstants.slowModeMaxSpeed = 0.1;
-    }).onlyWhile(Backwards);
+    // Commands.run(() -> {
+    //   RobotConstants.turboMode = false;
+    //   RobotConstants.slowModeMaxSpeed = 0.1;
+    //   System.err.println("BackwardsMode");
+    // }).onlyWhile(Backwards);
 
-    Commands.run(() -> {
-      RobotConstants.slowModeMaxSpeed = 0.125;
-    }).onlyWhile(NotBackwards);
+    // System.err.println(Backwards.getAsBoolean());
 
-    Commands.run(() -> {
-      RobotConstants.robotAccMaxSpeed = RobotConstants.slowModeMaxSpeed;
-    }).onlyWhile(SlowMode);
+    // Commands.run(() -> {
+    //   RobotConstants.slowModeMaxSpeed = 0.125;
+    // }).onlyWhile(NotBackwards);
 
-    Commands.run(() -> {
-      RobotConstants.robotAccMaxSpeed = 1;
-    }).onlyWhile(TurboMode);
+    // Commands.run(() -> {
+    //   RobotConstants.robotAccMaxSpeed = RobotConstants.slowModeMaxSpeed;
+    // }).onlyWhile(SlowMode);
 
-    Commands.run(() -> {
-      RobotConstants.robotAccMaxSpeed = RobotConstants.robotMaxSpeed;
-    }).onlyWhile(NormalMode);
+    // Commands.run(() -> {
+    //   RobotConstants.robotAccMaxSpeed = 1;
+    // }).onlyWhile(TurboMode);
 
-    Commands.run(() -> {
-      RobotConstants.slowMode = true;
-      RobotConstants.turboMode = false;
-    }).onlyWhile(AtTop);
+    // Commands.run(() -> {
+    //   RobotConstants.robotAccMaxSpeed = RobotConstants.robotMaxSpeed;
+    // }).onlyWhile(NormalMode);
+
+    // Commands.run(() -> {
+    //   RobotConstants.slowMode = true;
+    //   RobotConstants.turboMode = false;
+    // }).onlyWhile(AtTop);
 
     DRIV_CONTROLLER.L2().whileTrue(drivetrain.GoFromLeftTrigger());
     DRIV_CONTROLLER.R2().whileTrue(drivetrain.GoFromRightTrigger());
@@ -479,13 +495,36 @@ public class Robot extends TimedRobot {
     //   RobotConstants.robotAccMaxSpeed = 1;
     // }).onlyWhile(GoFasterButNotTurbo);
 
+
+    if (SlowMode.getAsBoolean()) {
+      RobotConstants.robotAccMaxSpeed = RobotConstants.slowModeMaxSpeed;
+      System.err.println("SlowMode");
+
+    }
+
+    if (TurboMode.getAsBoolean()) {
+      RobotConstants.robotAccMaxSpeed = 1;
+      System.err.println("TurboMode");
+
+    }
+
+    if (NormalMode.getAsBoolean()) {
+      RobotConstants.robotAccMaxSpeed = RobotConstants.robotMaxSpeed;
+    }
+
+    if (AtTop.getAsBoolean()) {
+      RobotConstants.slowMode = true;
+      RobotConstants.turboMode = false;
+    }
   
     // DRIVE
-    RobotConstants.leftOutput = Math.abs(RobotConstants.DrivleftStick) * RobotConstants.DrivleftStick;
-    RobotConstants.rightOutput = Math.abs(RobotConstants.DrivrightStick) * RobotConstants.DrivrightStick;
+    left1.set(Math.abs(DRIV_CONTROLLER.getLeftY())*DRIV_CONTROLLER.getLeftY()*RobotConstants.robotAccMaxSpeed);
+    right1.set(Math.abs(DRIV_CONTROLLER.getRightY())*DRIV_CONTROLLER.getRightY()*RobotConstants.robotAccMaxSpeed);
+    System.err.println(RobotConstants.DrivleftStick);
 
-    left1.set(RobotConstants.leftOutput * RobotConstants.robotAccMaxSpeed);
-    right1.set(RobotConstants.rightOutput * RobotConstants.robotAccMaxSpeed);
+    System.err.println(RobotConstants.elevatorRotHeight);
+
+
 
 
   }
