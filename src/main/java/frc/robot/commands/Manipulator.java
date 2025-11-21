@@ -45,16 +45,13 @@ public class Manipulator extends SubsystemBase {
         return wheelRot*4;
     }
 
-    public Command SetManipulators(double Speed) {
-        return this.run(() -> {
-            Robot.manLeft.set(RobotConstants.OpperarightTrigger*Speed);
-            Robot.manRight.set(RobotConstants.OpperarightTrigger*Speed);
-        });
+    public void SetManipulators(double Speed) {
+            Robot.manLeft.set(Robot.OPPERA_CONTROLLER.getL2Axis()*Speed);
+            Robot.manRight.set(Robot.OPPERA_CONTROLLER.getR2Axis()*Speed);
     }
     
-    public Command RandomWeirdThingThatOperatorBButtonDoes() {
-        return this.run(() -> {
+    public void RandomWeirdThingThatOperatorBButtonDoes() {
             Robot.manLeft.set(1);
-            Robot.manRight.set(1);});
+            Robot.manRight.set(1);
     }
 }

@@ -104,12 +104,10 @@ public class Elevator extends SubsystemBase{
   *
   * @param powered (use the motors to go to the 0 point or not)
   */
-  public Command reset0(boolean powered) {
-    BooleanSupplier CarriageBottom = () -> Robot.CarrigeBottom.get();
-    return this.run(() -> {Robot.elevatorR.set(-0.3);})
-    .onlyWhile(CarriageBottom)
-    .finallyDo(() -> {Robot.elevatorR.set(0);
-      Robot.elevatorEnc.setPosition(0);});
+  public void reset0(boolean powered) {
+    while (Robot.CarrigeBottom.get()){
+      Robot.elevatorR.set(-0.3);
+    }
   // if (powered) {
   // while (Robot.CarrigeBottom.get()) {
   // Robot.elevatorR.set(-0.3);
@@ -185,19 +183,15 @@ public class Elevator extends SubsystemBase{
    * @param level the level for what level you want the elevator to be
    * @return elevator does shit
    */
-  public Command elevatorSetFancy(int level) {
-    BooleanSupplier condition = () -> CalcDist(level, RobotConstants.elevatorRotHeight)/RobotConstants.elevatorMaxHeight > 0.06;
-    return run(() -> {Robot.elevatorR.set(CalcDist(level, RobotConstants.elevatorRotHeight)/RobotConstants.elevatorMaxRot);})
-    .onlyWhile(condition)
-    .finallyDo(() -> {Robot.elevatorR.set(0.03);});
+  public void elevatorSetFancy(int level) {
+    while (CalcDist(level, Robot.elevatorEnc.getPosition())/74 > 0.06) {
+      Robot.elevatorR.set(CalcDist(level, Robot.elevatorEnc.getPosition())/76.25);
+    };
   }
 
-  public Command elevatorSetSpeed(double speed) {
-    return this.run(() -> {Robot.elevatorR.set(speed); System.err.println("Set elevator Speed");
-  });
+  public void elevatorSetSpeed(double speed) {
+    Robot.elevatorR.set(speed);
+    System.err.println("Set elevator Speed");
+  };
   
   }
-
-    
-
-}

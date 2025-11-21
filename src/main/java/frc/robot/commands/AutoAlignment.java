@@ -48,16 +48,11 @@ public class AutoAlignment extends SubsystemBase {
      * @param Angle
      * @return Turn's that angle (90 left, 270 right, 180 back, 0 front)
      */
-    public Command TurnAngle(int Angle) {
-        BooleanSupplier Condition = () -> Robot.gyro.getAngle() > Angle+0.05 || Robot.gyro.getAngle() < Angle-0.05;
-
-        return this.run(() -> {
-        Robot.right1.set(-Math.copySign(0.5, Angle - Robot.gyro.getAngle()));
-        Robot.left1.set(Math.copySign(0.5, Angle - Robot.gyro.getAngle()));})
-        .onlyWhile(Condition)
-        .finallyDo(() -> {
-        Robot.right1.set(0);
-        Robot.left1.set(0);});
+    public void TurnAngle(int Angle) {
+        while (Robot.gyro.getAngle() > Angle+0.05 || Robot.gyro.getAngle() < Angle-0.05) {
+            Robot.right1.set(-Math.copySign(0.5, Angle - Robot.gyro.getAngle()));
+            Robot.left1.set(Math.copySign(0.5, Angle - Robot.gyro.getAngle()));
+        }
     }
 
     /**
@@ -65,16 +60,11 @@ public class AutoAlignment extends SubsystemBase {
      * @param DistInInches
      * @return Drives <b>FORWARD<b> that amount of inches
      */
-    public Command DriveUntil(double DistInInches) {
-        BooleanSupplier Condition = () -> Robot.backCanRange.getDistance().getValueAsDouble()*39.37 > DistInInches;
-
-        return this.run(() -> {
-        Robot.right1.set(-0.67);
-        Robot.left1.set(-0.67);})
-        .onlyWhile(Condition)
-        .finallyDo(() -> {
-        Robot.right1.set(0);
-        Robot.left1.set(0);});
+    public void DriveUntil(double DistInInches) {
+        while (Robot.backCanRange.getDistance().getValueAsDouble()*39.37 > DistInInches) {
+            Robot.right1.set(-0.67);
+            Robot.left1.set(-0.67);
+        }
     }
     /**
      * run with 
@@ -88,7 +78,7 @@ public class AutoAlignment extends SubsystemBase {
      * @param Pos
      * @return Auto Alignment For Shelf
      */
-    public Command AutoAlignmentForShelf(int Pos) {
+    public void AutoAlignmentForShelf(int Pos) {
         double distanceToDrive = switch(Pos) {
             case 1 -> 156;
             case 2 -> 144;
@@ -97,12 +87,10 @@ public class AutoAlignment extends SubsystemBase {
             case 5 -> 108;
             default -> throw new IllegalArgumentException("pos must be 1-5");
         };
-    
-        return Commands.sequence(
-            TurnAngle(180),
-            DriveUntil(distanceToDrive),
-            TurnAngle(90),
-            DriveUntil(10)
-        );
+        
+        TurnAngle(180);
+        DriveUntil(distanceToDrive);
+        TurnAngle(90);
+        DriveUntil(10);
     }
 }

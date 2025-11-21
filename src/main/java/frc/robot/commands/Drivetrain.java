@@ -2,41 +2,30 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.constants.RobotConstants;
 
 public class Drivetrain extends SubsystemBase {
-    public Command SetSlowMode() {
-        return this.run(() -> {
-            RobotConstants.slowMode = true;
-            System.err.println("Slow");
-
-        });
+    public void SetSlowMode() {
+        RobotConstants.slowMode = true;
     };
 
-    public Command SetTurboMode() {
-        return this.run(() -> {
+    public void SetTurboMode() {
             RobotConstants.turboMode = true;
-        });
     }
 
-    public Command SetNormalMod() {
-        return this.run(() -> {
+    public void SetNormalMod() {
             RobotConstants.turboMode = false;
             RobotConstants.slowMode = false;
-        });
     }
 
-    public Command GoFromLeftTrigger() {
-        return this.run(() -> {
-            RobotConstants.leftOutput = RobotConstants.DrivleftTrigger;
-            RobotConstants.rightOutput = RobotConstants.DrivleftTrigger;
-        });
+    public void GoFromLeftTrigger() {
+        Robot.left1.set(Robot.DRIV_CONTROLLER.getL2Axis());
+        Robot.right1.set(Robot.DRIV_CONTROLLER.getL2Axis());
     }
 
-    public Command GoFromRightTrigger() {
-        return this.run(() -> {
-            RobotConstants.leftOutput = -RobotConstants.DrivleftTrigger;
-            RobotConstants.rightOutput = -RobotConstants.DrivleftTrigger;
-        });
+    public void GoFromRightTrigger() {
+        Robot.left1.set(-Robot.DRIV_CONTROLLER.getL2Axis());
+        Robot.right1.set(-Robot.DRIV_CONTROLLER.getL2Axis());
     }
 }

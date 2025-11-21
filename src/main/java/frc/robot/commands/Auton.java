@@ -26,69 +26,64 @@ public class Auton extends SubsystemBase {
      * @throws urMom
      * @return true, also makes the drivetrain move that many rotations on both motors, going forward/backward
      */
-    public Command goFwd(double rot) {
+    public void goFwd(double rot) {
         double encLOffset = Robot.drvLEnc.getPosition();
         double encROffset = Robot.drvREnc.getPosition();
 
         Robot.left1.set(0);
         Robot.right1.set(0);
 
-        BooleanSupplier whileCondition = () -> (Math.abs(Robot.drvLEnc.getPosition()-encLOffset) < Math.abs(rot)
-        && Math.abs(Robot.drvREnc.getPosition()-encROffset) < Math.abs(rot));
-
-        if (rot > 0) {
-            return this.run(() -> 
-                {Robot.left1.set(-0.25 * ((Math.abs(Robot.drvLEnc.getPosition()-encLOffset) - Math.abs(rot))/((Math.abs(Robot.drvLEnc.getPosition()-encLOffset) - Math.abs(rot))+1)));
-                Robot.right1.set(-0.25 * ((Math.abs(Robot.drvREnc.getPosition()-encROffset) - Math.abs(rot))/((Math.abs(Robot.drvREnc.getPosition()-encROffset) - Math.abs(rot))+1)));})
-                .onlyWhile(whileCondition);
-        } else {
-            return this.run(() -> 
-                {Robot.left1.set(0.25 * ((Math.abs(Robot.drvLEnc.getPosition()-encLOffset) - Math.abs(rot))/((Math.abs(Robot.drvLEnc.getPosition()-encLOffset) - Math.abs(rot))+1)));
-                Robot.right1.set(0.25 * ((Math.abs(Robot.drvREnc.getPosition()-encROffset) - Math.abs(rot))/((Math.abs(Robot.drvREnc.getPosition()-encROffset) - Math.abs(rot))+1)));})
-                .onlyWhile(whileCondition);
-        }
-
+        while (Math.abs(Robot.drvLEnc.getPosition()-encLOffset) < Math.abs(rot) && Math.abs(Robot.drvREnc.getPosition()-encROffset) < Math.abs(rot)) {
+            if (rot > 0) {
+                    Robot.left1.set(-0.25 * ((Math.abs(Robot.drvLEnc.getPosition()-encLOffset) - Math.abs(rot))/((Math.abs(Robot.drvLEnc.getPosition()-encLOffset) - Math.abs(rot))+1)));
+                    Robot.right1.set(-0.25 * ((Math.abs(Robot.drvREnc.getPosition()-encROffset) - Math.abs(rot))/((Math.abs(Robot.drvREnc.getPosition()-encROffset) - Math.abs(rot))+1)));
+            } else {
+                    Robot.left1.set(0.25 * ((Math.abs(Robot.drvLEnc.getPosition()-encLOffset) - Math.abs(rot))/((Math.abs(Robot.drvLEnc.getPosition()-encLOffset) - Math.abs(rot))+1)));
+                    Robot.right1.set(0.25 * ((Math.abs(Robot.drvREnc.getPosition()-encROffset) - Math.abs(rot))/((Math.abs(Robot.drvREnc.getPosition()-encROffset) - Math.abs(rot))+1)));}
+            }
     }
+
 
     /**
      * IMPORTANT: input "L" or "R" for left and right respectively
      * @param LR
      * @return makes the robot turn left or right
      */
-    public Command turnLR(String LR) {
+    public void turnLR(String LR) {
         BooleanSupplier leftReq = () -> Robot.gyro.getAngle() < 90;
         BooleanSupplier rightReq = () -> Robot.gyro.getAngle() > -90;
 
         if (LR == "L") {
-            return this.run(() -> {
-            Robot.right1.set(-0.25);
-            Robot.left1.set(0.25);})
-            .onlyWhile(leftReq)
-            .andThen(() -> {Robot.left1.set(0); Robot.right1.set(0);});
+            while (Robot.gyro.getAngle() < 90) {
+                Robot.right1.set(-0.25);
+                Robot.left1.set(0.25);
+            }
         } else if (LR == "R") {
-            return this.run(() -> {
-            Robot.right1.set(0.25);
-            Robot.left1.set(-0.25);})
-            .onlyWhile(rightReq)
-            .andThen(() -> {Robot.left1.set(0); Robot.right1.set(0);});
+            while (Robot.gyro.getAngle() > -90) {
+                Robot.right1.set(0.25);
+                Robot.left1.set(-0.25);
+            }
             } else {
-                return this.run(() -> {System.out.print("U DIDN'T INPUT L OR R (uppercase)");});
+                System.out.print("U DIDN'T INPUT L OR R (uppercase)");
             }
         }
 
-    public Command goToSpecificElevatorLevel(int level) {
-        BooleanSupplier Condition = () -> Math.abs(Elevator.CalcDist(level, Robot.elevatorEnc.getPosition()) - Robot.elevatorEnc.getPosition()) >= 0.5;
-        return this.run(() -> {Robot.elevatorR.set(-(Elevator.CalcDist(level, Robot.elevatorEnc.getPosition())/(76.25)));})
-        .onlyWhile(Condition)
-        .andThen(() -> {Robot.elevatorR.set(0);});
+    public void goToSpecificElevatorLevel(int level) {
+        while (Math.abs(Elevator.CalcDist(level, Robot.elevatorEnc.getPosition()) - Robot.elevatorEnc.getPosition()) >= 0.5) {
+            Robot.elevatorR.set(-(Elevator.CalcDist(level, Robot.elevatorEnc.getPosition())/(76.25)));
+        }
     }
 
-    public Command outake() {
-        return this.run(() -> {Robot.manRight.set(-RobotConstants.manRightOutput); Robot.manLeft.set(-RobotConstants.manLeftOutput);});
+    public void intake() {
+        Robot.manLeft.set(1);
+        Robot.manRight.set(1);
     }
 
-    public Command intake() {
-        return this.run(() -> {Robot.manRight.set(RobotConstants.manRightOutput); Robot.manLeft.set(RobotConstants.manLeftOutput);});
+    public void outake() {
+        Robot.manLeft.set(-1);
+        Robot.manRight.set(-1);
     }
-}
+
+    }
+
 
