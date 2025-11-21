@@ -102,8 +102,6 @@ public class Robot extends TimedRobot {
   public final BooleanSupplier ELevatorNormalHeight = () -> (elevatorEnc.getPosition() <= 68 && elevatorEnc.getPosition() >= 4);
   public final BooleanSupplier ElevatorSLowDownHeight = () -> elevatorEnc.getPosition() <= 4;
   public final BooleanSupplier AtTop = (() -> (CarrigeTop.get() || (!stg2Top.get())));
-  public final BooleanSupplier OverExtend = () -> (OPPERA_CONTROLLER.getPOV() == 0 || OPPERA_CONTROLLER.getPOV() == 45 || OPPERA_CONTROLLER.getPOV() == 315) && (AtTop.getAsBoolean());
-  public final BooleanSupplier UnderExtend = () -> (OPPERA_CONTROLLER.getPOV() == 180 || OPPERA_CONTROLLER.getPOV() == 225 || OPPERA_CONTROLLER.getPOV() == 135) && CarrigeBottom.get();
   public final BooleanSupplier SlowMode = () -> DRIV_CONTROLLER.getL2Button();
   public final BooleanSupplier TurboMode = () -> DRIV_CONTROLLER.getL1Button();
   public final BooleanSupplier NormalMode = () -> (SlowMode.getAsBoolean() && TurboMode.getAsBoolean()) || (!SlowMode.getAsBoolean() && !TurboMode.getAsBoolean());
@@ -324,27 +322,33 @@ public class Robot extends TimedRobot {
         RobotConstants.GoFromRightTrigger = false;
       }
 
+      if (DRIV_CONTROLLER.getL2Axis() > -.9){
+      RobotConstants.GoFromLeftTrigger = true;
+
+    } else if (DRIV_CONTROLLER.getR2Axis() > -.9){
+      RobotConstants.GoFromRightTrigger = true;
+
+
       if (Turning.getAsBoolean()) { 
         RobotConstants.robotAccMaxSpeed = 1;
 
-      } else if (DRIV_CONTROLLER.getL2Axis() > -.9){
-        RobotConstants.GoFromLeftTrigger = true;
-
-      } else if (DRIV_CONTROLLER.getR2Axis() > -.9){
-        RobotConstants.GoFromRightTrigger = true;
-
       } else if (!(DRIV_CONTROLLER.getR1Button()) && !(DRIV_CONTROLLER.getL1Button())){
         RobotConstants.robotAccMaxSpeed = .6;
-        System.err.println("Normaling It");
-
 
       } else if (DRIV_CONTROLLER.getR1Button()) {
         RobotConstants.robotAccMaxSpeed = 1;
         System.err.println("Turboing It");
 
+      } else if (DRIV_CONTROLLER.getL1Button()) {
+        RobotConstants.robotAccMaxSpeed = .15;
+        System.err.println("Slowing It");
 
       } else if (DRIV_CONTROLLER.getR1Button()) {
         RobotConstants.robotAccMaxSpeed = .125;
+      }
+
+      if (DRIV_CONTROLLER.getR1Button()) {
+        System.err.println("R1 Presesed");
       }
 
 
@@ -353,13 +357,16 @@ public class Robot extends TimedRobot {
       if (RobotConstants.GoFromLeftTrigger ){
       left1.set((-DRIV_CONTROLLER.getL2Axis()*RobotConstants.robotAccMaxSpeed+1)/2);
       right1.set((-DRIV_CONTROLLER.getL2Axis()*RobotConstants.robotAccMaxSpeed+1)/2);
+      System.err.println("Left Trigger");
     } else if (RobotConstants.GoFromRightTrigger ){
       left1.set((DRIV_CONTROLLER.getR2Axis()*RobotConstants.robotAccMaxSpeed+1)/2);
       right1.set((DRIV_CONTROLLER.getR2Axis()*RobotConstants.robotAccMaxSpeed+1)/2);
+      System.err.println("Right Trigger");
     } else {
       left1.set(Math.abs(DRIV_CONTROLLER.getLeftY())*DRIV_CONTROLLER.getLeftY()*RobotConstants.robotAccMaxSpeed);
       right1.set(Math.abs(DRIV_CONTROLLER.getRightY())*DRIV_CONTROLLER.getRightY()*RobotConstants.robotAccMaxSpeed);
     }
+  }
     
 
 
