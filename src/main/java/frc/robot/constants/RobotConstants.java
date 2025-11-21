@@ -17,6 +17,8 @@ public class RobotConstants {
     public static double robotAccMaxSpeed = 0.5;
     public static boolean slowMode=false;
     public static boolean turboMode=false;
+    public static boolean GoFromLeftTrigger;
+    public static boolean GoFromRightTrigger;
 
     // elevator (all values in inches)
     public static final double kPoffset = 25;

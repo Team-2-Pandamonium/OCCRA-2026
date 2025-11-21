@@ -46,8 +46,8 @@ public class Manipulator extends SubsystemBase {
     }
 
     public void SetManipulators(double Speed) {
-            Robot.manLeft.set(Robot.OPPERA_CONTROLLER.getL2Axis()*Speed);
-            Robot.manRight.set(Robot.OPPERA_CONTROLLER.getR2Axis()*Speed);
+            Robot.manLeft.set(Speed);
+            Robot.manRight.set(Speed);
     }
     
     public void RandomWeirdThingThatOperatorBButtonDoes() {

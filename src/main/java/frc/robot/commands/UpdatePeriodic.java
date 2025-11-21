@@ -29,17 +29,17 @@ public class UpdatePeriodic extends SubsystemBase {
         //everything here was setting stuff for robotconstants
     }
 
-    public void ABXYDpadUpdate() {
-        while (Robot.OPPERA_CONTROLLER.getCrossButton()) {
-            elevator.elevatorSetFancy(1);
-        }
-        while (Robot.OPPERA_CONTROLLER.getTriangleButton()) {
-            elevator.elevatorSetFancy(3);
-        }
-        while (Robot.OPPERA_CONTROLLER.getCircleButton()) {
-            elevator.elevatorSetFancy(2);
-        }
-    }
+    // public void ABXYDpadUpdate() {
+    //     while (Robot.OPPERA_CONTROLLER.getCrossButton()) {
+    //         elevator.elevatorSetFancy(1);
+    //     }
+    //     while (Robot.OPPERA_CONTROLLER.getTriangleButton()) {
+    //         elevator.elevatorSetFancy(3);
+    //     }
+    //     while (Robot.OPPERA_CONTROLLER.getCircleButton()) {
+    //         elevator.elevatorSetFancy(2);
+    //     }
+    // }
 
     public static void updateSensorValues() {
     }
