@@ -55,3 +55,144 @@ Within the bottom 6” inches, go from 60% to 5%
 2. using front dist sensor, go forward/backward to 1-5 pos 
 3. turn 90/270 degrees from current pos (left 90, right 270)
 4. go to a specific x based on side dist sensor
+
+
+
+
+todo list offseason:
+    -auton training
+    -code training (alr given tho, we do this alr)
+    -command based code understanding
+    -teach norah code, we need another code slave
+
+individual people goals (filename:peoplestuff):
+    -Dushyanth
+        -be in pit with daniel
+        -explain code to ppl
+    -Daniel
+        - look into command/subsystem based programming more
+    -Norah
+        -learn code (she can type wtv she wants when she gets access to the code)
+    -General people:
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    import java.util.Random;
+
+    public class peoplestuff extends SubsystemBase {
+
+        Random ass = new Random()
+
+        public void CheerAF() {
+            Human.Mouth.setVolume(1.00);
+            Human.Mouth.setSpeech("PANDA-MONIUM");
+        }
+
+        public void GoToPitsAF() {
+            while (!Human.Eyes.getPits()) {
+                Human.Eyes.setSearch(true);
+            } else while (Human.Eyes.getPits()) {
+                //leg's act as pink arm, rotating on an axis until touching smth
+                while (Human.Legs.onGroundRight()) {
+                    Human.Legs.setRight(1.00);
+                }
+                while (Human.Legs.onGroundLeft()) {
+                    Human.Legs.setLeft(1.00);
+                }
+            }
+
+            while (Human.Brain.getPits()) {
+                return true;
+            }
+        }
+
+        public void CodeAF() {
+            while(!Human.Brain.High) {
+                Human.Brain.getDrugs();
+            }
+            while(Human.Brain.High) {
+                Human.Fingers.Code();
+            }
+        }
+
+        public void MechanicalAF() {
+            Human.Fingers.Break();
+            Human.Fingers.Break();
+            Human.Fingers.Break();
+            Human.Fingers.Break();
+            Human.Fingers.Break();
+            Human.Fingers.Break();
+            Human.Fingers.Break();
+            Human.Fingers.Break();
+            Human.Fingers.Break();
+            Human.Fingers.Break();
+
+            Human.Arms.Break();
+            Human.Head.Concussion();
+            Human.Legs.Break();
+            Human.Hands.Hurt();
+
+            Human.Brain.Confusion()
+        }
+
+        public void CadAF(boolean insane) {
+            if (insane) {
+                Human.Hands.Break();
+                Human.Brain.LockIn();                
+            } else {
+                Human.Brain.Insane();
+            }
+        }
+
+        public void ElectricalAF() {
+            if (!Human.Brain.PluggedIn) {
+                Human.Brain.getPlug();
+                Human.Brain.PlugIn();
+            }
+        }
+
+        public void YapAF() {
+            Human.Mouth.setVolume(inf);
+            Human.Mouth.setSpeech(ass.pull());
+            //the ass.pull function takes 100 random characters and has a topic for each one,
+            //when using setSpeech, this will make the speaker talk about 100 random topics at once
+        }
+
+        public void DoSmthBro() {
+            while (true) {
+                System.out.println("fuck you, ur jst braindead now")
+                System.exit(-1)
+            }
+        }
+
+        public Command RUNTHISCONSTANTLY() {
+            if (in_audience) {
+                return(() -> {
+                    CheerAF()
+                    GoToPitsAF()
+                })
+            } else if (in_pits) {
+                return (() -> {
+                    CodeAF()
+                    MechanicalAF()
+                    CadAF()
+                    ElectricalAF()
+                    YapAF()
+                })
+            } else {
+                return(() -> {
+                    DoSmthBro()
+                })
+            }
+        }
+    }
