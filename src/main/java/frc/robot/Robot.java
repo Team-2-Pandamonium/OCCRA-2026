@@ -18,8 +18,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -115,8 +114,7 @@ public class Robot extends TimedRobot {
   // gyroscope
   public static final AHRS gyro = new AHRS(SPI.Port.kMXP);
 
-  // camera
-  public static final UsbCamera camera = CameraServer.startAutomaticCapture();
+
   // controllers
   public static final PS5Controller DRIV_CONTROLLER = new PS5Controller(0);
   public static final XboxController OPPERA_CONTROLLER = new XboxController(1);
@@ -165,6 +163,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.setDefaultNumber("Navx Pitch", gyro.getPitch());
     SmartDashboard.setDefaultNumber("RPS of Left Motor", drvLEnc.getVelocity()*60);
     SmartDashboard.setDefaultNumber("RPS of Right Motor", drvREnc.getVelocity()*60);
+
 
 
     //SparkMaxConfig
@@ -230,9 +229,9 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    if (autonTimer.get() >= 1 && autonTimer.get() <= 3.5){
-      left1.set(.3);
-      right1.set(.3);
+    if (autonTimer.get() >= 2 && autonTimer.get() <= 10){
+      left1.set(-.3);
+      right1.set(-.3);
     } else {
       left1.set(0);
       right1.set(0);
@@ -281,7 +280,7 @@ public class Robot extends TimedRobot {
     } 
 
     if (OperaUp.getAsBoolean()) {
-      if (elevatorEnc.getPosition() > 72){
+      if (elevatorEnc.getPosition() > 73){
         elevatorR.set(.05);
       } else if (elevatorEnc.getPosition() < 3){
         elevatorR.set(.3);
@@ -299,20 +298,26 @@ public class Robot extends TimedRobot {
         else {elevatorR.set(-.55);}
 
       } else {
-      elevatorR.set(.04);
+      elevatorR.set(.025);
     }
 
     if (OPPERA_CONTROLLER.getLeftTriggerAxis() >.1 ) {
-      manipulator.SetManipulators(-.5 * OPPERA_CONTROLLER.getLeftTriggerAxis());
-    } else if (OPPERA_CONTROLLER.getRightTriggerAxis() >.1) {
-      manipulator.SetManipulators(.6 * OPPERA_CONTROLLER.getRightTriggerAxis());
+      manipulator.SetManipulators(-.4 * OPPERA_CONTROLLER.getLeftTriggerAxis());
     } else if (OPPERA_CONTROLLER.getLeftY() >.1 || OPPERA_CONTROLLER.getRightY() > .1 || OPPERA_CONTROLLER.getLeftY() <-.1 || OPPERA_CONTROLLER.getRightY() <- .1){
       manLeft.set(OPPERA_CONTROLLER.getLeftY());
       manRight.set(OPPERA_CONTROLLER.getRightY());
+    } else if (OPPERA_CONTROLLER.getRightTriggerAxis() >.1) {
+      manipulator.SetManipulators(.45 * OPPERA_CONTROLLER.getRightTriggerAxis());
+    } else if (OPPERA_CONTROLLER.getAButton()) { 
+      manRight.set(1);
+      manLeft.set(.4);
+    } else if (OPPERA_CONTROLLER.getXButton()) { 
+      manRight.set(-.2);
+      manLeft.set(-.2);
     } else {
       manRight.set(.01);
       manLeft.set(.01);
-    }
+    
 
 
       if (DRIV_CONTROLLER.getR1Button()) {
@@ -356,7 +361,9 @@ public class Robot extends TimedRobot {
     } else {
       left1.set(Math.abs(DRIV_CONTROLLER.getLeftY())*DRIV_CONTROLLER.getLeftY()*RobotConstants.robotAccMaxSpeed);
       right1.set(Math.abs(DRIV_CONTROLLER.getRightY())*DRIV_CONTROLLER.getRightY()*RobotConstants.robotAccMaxSpeed);
-    }
+    } 
+
+  }
   }
     
 
